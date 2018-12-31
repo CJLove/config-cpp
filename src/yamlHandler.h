@@ -18,6 +18,8 @@ public:
     double GetDouble(const std::string &key) const;
     std::string GetString(const std::string &key) const;
 
+    std::string GetConfig() const;
+
 private:
     // Recursive function to find a node in a "path"
     bool GetNode(std::vector<std::string> &keys, const YAML::Node &cur, YAML::Node &node) const;

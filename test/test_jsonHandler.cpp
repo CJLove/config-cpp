@@ -134,4 +134,5 @@ TEST(JsonHandlerTest, NewDefaults) {
     // EXPECT_EQ(h.IsSet("nested-dict.key2.key2-subkey3"),true);
     // EXPECT_EQ(h.GetString("nested-dict.key2.key2-subkey3"),"another default");
 
+    std::cout << "Config data with defaults:\n" << h.GetConfig() << "\n";
 }

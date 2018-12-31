@@ -20,6 +20,8 @@ public:
     double GetDouble(const std::string &key) const;
     std::string GetString(const std::string &key) const;
 
+    std::string GetConfig() const;
+
 private:
     bool GetNode(const std::string &key, json &node) const;
 

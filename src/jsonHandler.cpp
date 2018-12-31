@@ -127,4 +127,8 @@ bool JsonHandler::AddDefaultNode(const DefaultValue &def) {
     return false;    
 }
 
+std::string JsonHandler::GetConfig() const {
+    return m_json.dump(2);
+}
+
 }  // namespace ConfigCpp

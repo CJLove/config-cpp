@@ -113,4 +113,10 @@ bool YamlHandler::AddDefaultNode(const DefaultValue &def) {
     return false;
 }
 
+std::string YamlHandler::GetConfig() const {
+    std::stringstream stream;
+    stream << m_yaml;
+    return stream.str();
+}
+
 }  // namespace ConfigCpp

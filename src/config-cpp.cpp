@@ -12,8 +12,6 @@
 
 namespace ConfigCpp {
 
-
-
 /**
  * @brief Private implementation struct
  */
@@ -26,8 +24,6 @@ struct ConfigCpp::st_impl {
     ConfigType m_type;
     std::unique_ptr<ConfigCppBase> m_data;
     DefaultValues m_defaults;
-
-    std::string m_config;
 
     st_impl(int argc, char **argv) : m_argc(argc), m_argv(argv), m_type(ConfigType::UNKNOWN) {}
 
@@ -67,8 +63,7 @@ bool ConfigCpp::ReadInConfig() {
                     std::stringstream stream;
                     stream << file.rdbuf();
                     m_pImpl->m_type = ConfigType::YAML;
-                    m_pImpl->m_config = stream.str();
-                    m_pImpl->m_data.reset(new ConfigCppData<YamlHandler>(m_pImpl->m_config, m_pImpl->m_defaults));
+                    m_pImpl->m_data.reset(new ConfigCppData<YamlHandler>(stream.str(), m_pImpl->m_defaults));
                     return true;
                 }
             }
@@ -81,8 +76,7 @@ bool ConfigCpp::ReadInConfig() {
                     std::stringstream stream;
                     stream << file.rdbuf();
                     m_pImpl->m_type = ConfigType::JSON;
-                    m_pImpl->m_config = stream.str();
-                    m_pImpl->m_data.reset(new ConfigCppData<JsonHandler>(m_pImpl->m_config, m_pImpl->m_defaults));
+                    m_pImpl->m_data.reset(new ConfigCppData<JsonHandler>(stream.str(), m_pImpl->m_defaults));
                     return true;
                 }
             }
@@ -92,7 +86,11 @@ bool ConfigCpp::ReadInConfig() {
     return false;
 }
 
-std::string ConfigCpp::GetConfigData() const { return m_pImpl->m_config; }
+std::string ConfigCpp::GetConfigData() const { 
+    if (m_pImpl->m_data)
+        return m_pImpl->m_data->GetConfig();
+    return "";
+}
 
 ConfigType ConfigCpp::GetConfigType() const { return m_pImpl->m_type; }
 
@@ -128,28 +126,28 @@ std::string ConfigCpp::GetString(const std::string &key) const {
 
 void ConfigCpp::SetDefault(const std::string &key, const bool &boolVal) {
     if (m_pImpl) {
-        DefaultValue def(key,boolVal);
+        DefaultValue def(key, boolVal);
         m_pImpl->m_defaults.push_back(def);
     }
 }
 
 void ConfigCpp::SetDefault(const std::string &key, const int &intVal) {
     if (m_pImpl) {
-        DefaultValue def(key,intVal);
+        DefaultValue def(key, intVal);
         m_pImpl->m_defaults.push_back(def);
     }
 }
 
 void ConfigCpp::SetDefault(const std::string &key, const double &doubleVal) {
     if (m_pImpl) {
-        DefaultValue def(key,doubleVal);
+        DefaultValue def(key, doubleVal);
         m_pImpl->m_defaults.push_back(def);
     }
 }
 
 void ConfigCpp::SetDefault(const std::string &key, const std::string &stringVal) {
     if (m_pImpl) {
-        DefaultValue def(key,stringVal);
+        DefaultValue def(key, stringVal);
         m_pImpl->m_defaults.push_back(def);
     }
 }

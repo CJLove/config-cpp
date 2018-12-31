@@ -15,6 +15,8 @@ public:
     virtual int GetInt(const std::string &key) const = 0;
     virtual double GetDouble(const std::string &key) const = 0;
     virtual std::string GetString(const std::string &key) const = 0;
+
+    virtual std::string GetConfig() const = 0;
 };
 
 
@@ -42,6 +44,9 @@ template<typename T>
             return m_handler.GetString(key);
         }
 
+        std::string GetConfig() const override {
+            return m_handler.GetConfig();
+        }
 
     private:
         T m_handler;
