@@ -9,6 +9,8 @@
 using nlohmann::json;
 
 // Sample user-provided datatype matching ../inputs/json/config.json
+//
+// See https://github.com/nlohmann/json/blob/develop/README.md for converting to/from arbitrary types
 
 struct JsonConfig
 {
@@ -30,22 +32,9 @@ struct JsonConfig
 std::ostream &operator<<(std::ostream &os, const JsonConfig &s);
 
 void to_json(json &j, const JsonConfig &s);
-// {
-//     j = json{
-//         {"top-string",s.top_string}, 
-//         {"top-int", s.top_int}, 
-//         {"top-bool", s.top_bool},
-//         {"top-list", s.top_list},
-//         {"top-dict", s.top_dict}
-//     };
-// }
 
 void from_json(const json &j, JsonConfig &s);
-// {
-//     j.at("top-string").get_to(s.top_string);
-//     j.at("top-int").get_to(s.top_int);
-//     j.at("top-bool").get_to(s.top_bool);
-// }
+
 
 
 

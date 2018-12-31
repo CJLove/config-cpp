@@ -1,4 +1,4 @@
-//#pragma once
+#pragma once
 #include <iostream>
 #include <map>
 #include <string>
@@ -7,6 +7,8 @@
 #include "yaml-cpp/yaml.h"
 
 // Sample user-provided datatype matching ../inputs/yaml/config.yaml
+//
+// See https://github.com/jbeder/yaml-cpp/wiki/Tutorial for converting to/from native types
 
 struct YamlConfig {
     std::string top_string;
