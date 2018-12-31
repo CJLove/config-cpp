@@ -5,13 +5,18 @@
 #include "config-cpp/config-cpp.h"
 
 #include "configCppData.h"
-
+#include "default.h"
 #include "jsonHandler.h"
 
 #include "yamlHandler.h"
 
 namespace ConfigCpp {
 
+
+
+/**
+ * @brief Private implementation struct
+ */
 struct ConfigCpp::st_impl {
     int m_argc;
     char **m_argv;
@@ -20,6 +25,7 @@ struct ConfigCpp::st_impl {
     Callback *m_callback;
     ConfigType m_type;
     std::unique_ptr<ConfigCppBase> m_data;
+    DefaultValues m_defaults;
 
     std::string m_config;
 
@@ -62,7 +68,7 @@ bool ConfigCpp::ReadInConfig() {
                     stream << file.rdbuf();
                     m_pImpl->m_type = ConfigType::YAML;
                     m_pImpl->m_config = stream.str();
-                    m_pImpl->m_data.reset(new ConfigCppData<YamlHandler>(m_pImpl->m_config));
+                    m_pImpl->m_data.reset(new ConfigCppData<YamlHandler>(m_pImpl->m_config, m_pImpl->m_defaults));
                     return true;
                 }
             }
@@ -76,7 +82,7 @@ bool ConfigCpp::ReadInConfig() {
                     stream << file.rdbuf();
                     m_pImpl->m_type = ConfigType::JSON;
                     m_pImpl->m_config = stream.str();
-                    m_pImpl->m_data.reset(new ConfigCppData<JsonHandler>(m_pImpl->m_config));
+                    m_pImpl->m_data.reset(new ConfigCppData<JsonHandler>(m_pImpl->m_config, m_pImpl->m_defaults));
                     return true;
                 }
             }
@@ -91,29 +97,61 @@ std::string ConfigCpp::GetConfigData() const { return m_pImpl->m_config; }
 ConfigType ConfigCpp::GetConfigType() const { return m_pImpl->m_type; }
 
 bool ConfigCpp::IsSet(const std::string &key) const {
-    if (m_pImpl->m_data) return m_pImpl->m_data->IsSet(key);
+    if (m_pImpl->m_data)
+        return m_pImpl->m_data->IsSet(key);
     return false;
 }
 
-
 bool ConfigCpp::GetBool(const std::string &key) const {
-    if (m_pImpl->m_data) return m_pImpl->m_data->GetBool(key);
+    if (m_pImpl->m_data)
+        return m_pImpl->m_data->GetBool(key);
     return false;
 }
 
 int ConfigCpp::GetInt(const std::string &key) const {
-    if (m_pImpl->m_data) return m_pImpl->m_data->GetInt(key);
+    if (m_pImpl->m_data)
+        return m_pImpl->m_data->GetInt(key);
     return 0;
 }
 
 double ConfigCpp::GetDouble(const std::string &key) const {
-    if (m_pImpl->m_data) return m_pImpl->m_data->GetDouble(key);
+    if (m_pImpl->m_data)
+        return m_pImpl->m_data->GetDouble(key);
     return 0.0;
 }
 
 std::string ConfigCpp::GetString(const std::string &key) const {
-    if (m_pImpl->m_data) return m_pImpl->m_data->GetString(key);
+    if (m_pImpl->m_data)
+        return m_pImpl->m_data->GetString(key);
     return "";
+}
+
+void ConfigCpp::SetDefault(const std::string &key, const bool &boolVal) {
+    if (m_pImpl) {
+        DefaultValue def(key,boolVal);
+        m_pImpl->m_defaults.push_back(def);
+    }
+}
+
+void ConfigCpp::SetDefault(const std::string &key, const int &intVal) {
+    if (m_pImpl) {
+        DefaultValue def(key,intVal);
+        m_pImpl->m_defaults.push_back(def);
+    }
+}
+
+void ConfigCpp::SetDefault(const std::string &key, const double &doubleVal) {
+    if (m_pImpl) {
+        DefaultValue def(key,doubleVal);
+        m_pImpl->m_defaults.push_back(def);
+    }
+}
+
+void ConfigCpp::SetDefault(const std::string &key, const std::string &stringVal) {
+    if (m_pImpl) {
+        DefaultValue def(key,stringVal);
+        m_pImpl->m_defaults.push_back(def);
+    }
 }
 
 }  // namespace ConfigCpp

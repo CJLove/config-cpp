@@ -13,6 +13,7 @@ include_directories(
 
 add_executable ( ConfigCppTests 
     test_util.cpp 
+    test_default.cpp
     test_yamlHandler.cpp 
     test_jsonHandler.cpp
 )

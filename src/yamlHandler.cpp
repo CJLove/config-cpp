@@ -7,7 +7,7 @@ using namespace YAML;
 
 namespace ConfigCpp {
 
-YamlHandler::YamlHandler(const std::string &data) : m_yaml(YAML::Load(data)) {}
+YamlHandler::YamlHandler(const std::string &data, const DefaultValues &defaults) : m_yaml(YAML::Load(data)) {}
 
 YamlHandler::~YamlHandler() {}
 

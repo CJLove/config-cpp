@@ -1,12 +1,13 @@
 #pragma once
 
+#include "default.h"
 #include "yaml-cpp/yaml.h"
 
 namespace ConfigCpp {
 
 class YamlHandler {
 public:
-    YamlHandler(const std::string &data);
+    YamlHandler(const std::string &data, const DefaultValues &defaults);
 
     ~YamlHandler();
 

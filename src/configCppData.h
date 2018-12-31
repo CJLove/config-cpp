@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 
+#include "default.h"
+
 namespace ConfigCpp {
 
 class ConfigCppBase {
@@ -19,7 +21,7 @@ public:
 template<typename T>
     class ConfigCppData: public ConfigCppBase {
     public:
-        ConfigCppData(const std::string &data): ConfigCppBase(), m_handler(data) { }
+        ConfigCppData(const std::string &data, const DefaultValues &defaults): ConfigCppBase(), m_handler(data,defaults) { }
 
         virtual ~ConfigCppData() { }
 

@@ -12,4 +12,12 @@ std::vector<std::string> split(const std::string &str, const char delim) {
     return strings;
 }
 
+std::string prefix(const std::string &str) {
+    auto pos = str.find_last_of('.');
+    if (pos != std::string::npos) {
+        return str.substr(0,pos);
+    }
+    return str;
+}
+
 }  // namespace ConfigCpp

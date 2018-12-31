@@ -187,6 +187,38 @@ namespace ConfigCpp {
          */
         std::string GetString(const std::string &key) const;
 
+        /**
+         * @brief Set the default value for a particular key as a boolean
+         * 
+         * @param key 
+         * @param boolVal 
+         */
+        void SetDefault(const std::string &key, const bool &boolVal);
+
+        /**
+         * @brief Set the default value for a particular key as an integer value
+         * 
+         * @param key 
+         * @param intVal 
+         */
+        void SetDefault(const std::string &key, const int &intVal);
+
+        /**
+         * @brief Set the default value for a particular key as a double value
+         * 
+         * @param key 
+         * @param doubleVal 
+         */
+        void SetDefault(const std::string &key, const double &doubleVal);
+
+        /**
+         * @brief Set the default value for a particular key as a string value
+         * 
+         * @param key 
+         * @param stringVal 
+         */
+        void SetDefault(const std::string &key, const std::string &stringVal);
+
     private:
         struct st_impl;
         std::unique_ptr<st_impl> m_pImpl;

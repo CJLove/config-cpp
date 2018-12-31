@@ -1,9 +1,20 @@
+#include <iostream>
+
 #include "jsonHandler.h"
 #include "util.h"
 
 namespace ConfigCpp {
 
-JsonHandler::JsonHandler(const std::string &data) { m_json = json::parse(data); }
+JsonHandler::JsonHandler(const std::string &data, const DefaultValues &defaults) {
+    m_json = json::parse(data);
+
+    for (const auto &def : defaults) {
+        json node;
+        if (!GetNode(def.m_key,node)) {
+            AddDefaultNode(def);
+        }
+    }
+}
 
 JsonHandler::~JsonHandler() {}
 
@@ -53,7 +64,6 @@ std::string JsonHandler::GetString(const std::string &key) const {
             return node.get<std::string>();
         }
     } catch (...) {
-        
     }
     return "";
 }
@@ -73,4 +83,48 @@ bool JsonHandler::GetNode(const std::string &key, json &node) const {
     node = cur;
     return true;
 }
+
+bool JsonHandler::AddDefaultNode(const DefaultValue &def) {
+    auto keys = split(def.m_key, '.');
+    if (keys.size() == 1) {
+        auto key = keys[0];
+
+        switch (def.m_type) {
+            case DefaultValue::BOOL:
+                m_json[key] = def.m_bool;
+                break;
+            case DefaultValue::INT:
+                m_json[key] = def.m_int;
+                break;
+            case DefaultValue::DOUBLE:
+                m_json[key] = def.m_double;
+                break;
+            case DefaultValue::STRING:
+                m_json[key] = def.m_string;
+                break;
+        }
+    } else {
+        // json node;
+
+        // if (GetNode(prefix(def.m_key),node)) {
+        //     switch (def.m_type) {
+        //         case DefaultValue::BOOL:
+        //             node[keys[keys.size()-1]] = def.m_bool;
+        //             break;
+        //         case DefaultValue::INT:
+        //             node[keys[keys.size()-1]] = def.m_int;
+        //             break;
+        //         case DefaultValue::DOUBLE:
+        //             node[keys[keys.size()-1]] = def.m_double;
+        //             break;
+        //         case DefaultValue::STRING:
+        //             node[keys[keys.size()-1]] = def.m_string;
+        //             break;
+        //     }
+        //     return true;
+        // }
+    }
+    return false;    
+}
+
 }  // namespace ConfigCpp
