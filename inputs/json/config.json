@@ -1,0 +1,22 @@
+{
+    "top-string": "bob",
+    "top-int": 10,
+    "top-bool": true,
+    "top-list": [ "item1", "item2", "item3" ],
+    "top-dict": { "key1": "value1", "key2": "value2", "key3": "value3" },
+    "nested-list": [
+        [ "nested-item1-subitem1", "nested-item1-subitem2" ],
+        [ "nested-item2-subitem1", "nested-item2-subitem2" ]
+    ],
+    "nested-dict": {
+        "key1": {
+            "key1-subkey1": "value1-1",
+            "key1-subkey2": "value1-2"
+        },
+        "key2": {
+            "key2-subkey1": "value2-1",
+            "key2-subkey2": "value2-2"
+        }
+    }
+
+}
