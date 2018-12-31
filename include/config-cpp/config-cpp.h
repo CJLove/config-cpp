@@ -4,11 +4,15 @@
 #include <functional>
 #include <memory>
 
-// Helper function for unmarshaling yaml
-#include "config-cpp/unmarshal-yaml.h"
+#if defined(YAML_SUPPORT)
+    // Helper function for unmarshaling yaml
+    #include "config-cpp/unmarshal-yaml.h"
+#endif
 
-// Helper function for unmarshaling json
-#include "config-cpp/unmarshal-json.h"
+#if defined(JSON_SUPPORT)
+    // Helper function for unmarshaling json
+    #include "config-cpp/unmarshal-json.h"
+#endif
 
 namespace ConfigCpp {
     class ConfigCpp;
@@ -120,11 +124,13 @@ namespace ConfigCpp {
          */
         template<typename T>
         bool UnmarshalYaml(T &t) {
+#if defined(YAML_SUPPORT)            
             switch(GetConfigType()) {
                 case ConfigType::UNKNOWN: return false;
                 case ConfigType::YAML: return YamlImpl::Unmarshal(t, GetConfigData());
                 case ConfigType::JSON: return false;
             }
+#endif            
             return false;
         }
 
@@ -138,11 +144,13 @@ namespace ConfigCpp {
          */
         template<typename T>
         bool UnmarshalJson(T &t) {
+#if defined(JSON_SUPPORT)            
             switch(GetConfigType()) {
                 case ConfigType::UNKNOWN: return false;
                 case ConfigType::YAML: return false;
                 case ConfigType::JSON: return JsonImpl::Unmarshal(t, GetConfigData());
             }
+#endif            
             return false;
         }
 

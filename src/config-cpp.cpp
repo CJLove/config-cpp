@@ -1,14 +1,20 @@
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <vector>
 
 #include "config-cpp/config-cpp.h"
 
 #include "configCppData.h"
 #include "default.h"
-#include "jsonHandler.h"
 
-#include "yamlHandler.h"
+#if defined(JSON_SUPPORT)
+    #include "jsonHandler.h"
+#endif
+
+#if defined(YAML_SUPPORT)
+    #include "yamlHandler.h"
+#endif
 
 namespace ConfigCpp {
 
@@ -54,7 +60,7 @@ bool ConfigCpp::ReadInConfig() {
 
     for (const auto &path : m_pImpl->m_path) {
         auto name = path + m_pImpl->m_name;
-
+#if defined(YAML_SUPPORT)
         if (m_pImpl->m_type == ConfigType::UNKNOWN || m_pImpl->m_type == ConfigType::YAML) {
             for (const auto ext : yamlExtensions) {
                 std::cout << "Trying " << name + ext << "\n";
@@ -68,6 +74,8 @@ bool ConfigCpp::ReadInConfig() {
                 }
             }
         }
+#endif
+#if defined(JSON_SUPPORT)        
         if (m_pImpl->m_type == ConfigType::UNKNOWN || m_pImpl->m_type == ConfigType::JSON) {
             for (const auto ext : jsonExtensions) {
                 std::cout << "Trying " << name + ext << "\n";
@@ -81,8 +89,8 @@ bool ConfigCpp::ReadInConfig() {
                 }
             }
         }
+#endif
     }
-
     return false;
 }
 

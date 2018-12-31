@@ -11,12 +11,25 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/src
 )
 
-add_executable ( ConfigCppTests 
+set (ConfigCppTests_SRC 
     test_util.cpp 
     test_default.cpp
-    test_yamlHandler.cpp 
-    test_jsonHandler.cpp
 )
+
+if (YAML_SUPPORT)
+    set (ConfigCppTests_SRC ${ConfigCppTests_SRC}
+        test_yamlHandler.cpp
+    )
+endif(YAML_SUPPORT)
+
+if (JSON_SUPPORT)
+    set (ConfigCppTests_SRC ${ConfigCppTests_SRC}
+        test_jsonHandler.cpp
+    )
+endif(JSON_SUPPORT)
+
+add_executable ( ConfigCppTests ${ConfigCppTests_SRC} )
+
 
 target_link_libraries( ConfigCppTests gtest gtest_main )
 

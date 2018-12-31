@@ -7,12 +7,16 @@ include_directories(
     /usr/local/include
 )
 
-add_executable( yaml yaml.cpp yaml-config.cpp )
+if (YAML_SUPPORT)
+    add_executable( yaml yaml.cpp yaml-config.cpp )
 
-target_link_libraries( yaml config-cpp )
+    target_link_libraries( yaml config-cpp )
+endif(YAML_SUPPORT)
 
-add_executable( json json.cpp json-config.cpp )
+if (JSON_SUPPORT)
+    add_executable( json json.cpp json-config.cpp )
 
-target_link_libraries( json config-cpp )
+    target_link_libraries( json config-cpp )
+endif(JSON_SUPPORT)
 
 
