@@ -4,7 +4,7 @@ C++ Configuration library patterned after [`viper`](https://github.com/spf13/vip
 
 - framework for companion libraries which can read from JSON, YAML
 - unmarshaling configuration data to native C++ types
-- TODO: setting defaults
+- setting defaults
 - TODO: reading from environment variables
 - TODO: reading from command line flags
 - TODO: live watching and re-reading of config files or Kubernetes ConfigMaps

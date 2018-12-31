@@ -7,7 +7,16 @@ using namespace YAML;
 
 namespace ConfigCpp {
 
-YamlHandler::YamlHandler(const std::string &data, const DefaultValues &defaults) : m_yaml(YAML::Load(data)) {}
+YamlHandler::YamlHandler(const std::string &data, const DefaultValues &defaults) : m_yaml(YAML::Load(data)) 
+{
+    for (const auto &def: defaults) {
+        YAML::Node node;
+        auto keys = split(def.m_key, '.');
+        if (!GetNode(keys,m_yaml,node)) {
+            AddDefaultNode(def);
+        }
+    }
+}
 
 YamlHandler::~YamlHandler() {}
 
@@ -78,6 +87,28 @@ bool YamlHandler::GetNode(std::vector<std::string> &keys, const YAML::Node &cur,
     if (cur[key]) {
         keys.erase(keys.begin());
         return GetNode(keys, cur[key], node);
+    }
+    return false;
+}
+
+bool YamlHandler::AddDefaultNode(const DefaultValue &def) {
+    auto keys = split(def.m_key,'.');
+    if (keys.size() == 1) {
+        switch (def.m_type) {
+            case DefaultValue::BOOL:
+                m_yaml[keys[keys.size()-1]] = def.m_bool;
+                break;
+            case DefaultValue::INT:
+                m_yaml[keys[keys.size()-1]] = def.m_int;
+                break;
+            case DefaultValue::DOUBLE:
+                m_yaml[keys[keys.size()-1]] = def.m_double;
+                break;
+            case DefaultValue::STRING:
+                m_yaml[keys[keys.size()-1]] = def.m_string;
+                break;
+        }
+        return true;
     }
     return false;
 }

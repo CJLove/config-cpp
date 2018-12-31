@@ -22,6 +22,8 @@ private:
     // Recursive function to find a node in a "path"
     bool GetNode(std::vector<std::string> &keys, const YAML::Node &cur, YAML::Node &node) const;
 
+    bool AddDefaultNode(const DefaultValue &def);
+
     YAML::Node m_yaml;
 };
 

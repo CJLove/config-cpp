@@ -85,3 +85,59 @@ TEST(YamlHandlerTest, Get) {
 
     EXPECT_EQ(h.GetString("nested-dict.key1.key1-subkey1"), "value1-1");
 }
+
+TEST(YamlHandlerTest, NewDefaults) {
+    ConfigCpp::DefaultValues defaults;
+    // Add 4 top-level defaults
+    defaults.push_back(ConfigCpp::DefaultValue("def-bool",false));
+    defaults.push_back(ConfigCpp::DefaultValue("def-int",123));
+    defaults.push_back(ConfigCpp::DefaultValue("def-double",2.345));
+    defaults.push_back(ConfigCpp::DefaultValue("def-string","defaultStringVal"));
+    // Add default for value that will be read in from the config
+    defaults.push_back(ConfigCpp::DefaultValue("top-int",555));
+    // // Add nested defaults to existing json objects
+    // defaults.push_back(ConfigCpp::DefaultValue("top-dict.key4",1234));
+    // defaults.push_back(ConfigCpp::DefaultValue("nested-dict.key2.key2-subkey3","another default"));
+    ConfigCpp::YamlHandler h(yamlLiteral, defaults);
+
+    // Top-level keys
+    EXPECT_EQ(h.IsSet("top-string"), true);
+    EXPECT_EQ(h.IsSet("no-key"), false);
+    EXPECT_EQ(h.IsSet("top-dict"), true);
+    EXPECT_EQ(h.IsSet("top-list"), true);
+    EXPECT_EQ(h.IsSet("top-int"),true);
+
+    // Value from config takes precedence over default value
+    EXPECT_EQ(h.GetInt("top-int"),10);
+
+    // Nested keys
+    EXPECT_EQ(h.IsSet("top-dict.key1"), true);
+    EXPECT_EQ(h.IsSet("top-dict.no-key"), false);
+
+    EXPECT_EQ(h.IsSet("nested-dict.key1.key1-subkey1"), true);
+    EXPECT_EQ(h.IsSet("nested-dict.key1.no-key"), false);
+
+    // Repeat the top-level keys to ensure we haven't messed with the json structure
+    EXPECT_EQ(h.IsSet("top-string"), true);
+    EXPECT_EQ(h.IsSet("no-key"), false);
+    EXPECT_EQ(h.IsSet("top-dict"), true);
+    EXPECT_EQ(h.IsSet("top-list"), true);
+
+    // Values added as defaults
+    EXPECT_EQ(h.IsSet("def-bool"),true);
+    EXPECT_EQ(h.GetBool("def-bool"),false);
+    EXPECT_EQ(h.IsSet("def-int"),true);
+    EXPECT_EQ(h.GetInt("def-int"),123);
+    EXPECT_EQ(h.IsSet("def-double"),true);
+    EXPECT_EQ(h.GetDouble("def-double"),2.345);
+    EXPECT_EQ(h.IsSet("def-string"),true);
+    EXPECT_EQ(h.GetString("def-string"),"defaultStringVal");
+    EXPECT_EQ(h.IsSet("def-nokey"),false);
+
+    // // Nested values added as defaults
+    // EXPECT_EQ(h.IsSet("top-dict.key4"),true);
+    // EXPECT_EQ(h.GetInt("top-dict.key4"),1234);
+    // EXPECT_EQ(h.IsSet("nested-dict.key2.key2-subkey3"),true);
+    // EXPECT_EQ(h.GetString("nested-dict.key2.key2-subkey3"),"another default");
+
+}
