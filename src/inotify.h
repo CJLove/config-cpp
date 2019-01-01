@@ -33,7 +33,7 @@ class Inotify {
 public:
     Inotify();
     ~Inotify();
-    
+
     void watchFile(const std::string &file);
     void unwatchFile(const std::string &file);
     void onEvent(Event event, EventObserver observer);
@@ -71,14 +71,14 @@ private:
     std::atomic<bool> m_stopped;
     int m_epollFd;
     epoll_event m_inotifyEpollEvent;
-    epoll_event m_stoppPipeEpollEvent;
+    epoll_event m_stopPipeEpollEvent;
     epoll_event m_epollEvents[MAX_EPOLL_EVENTS];
     std::thread m_thread;
 
     std::function<void(FileSystemEvent)> m_onEventTimeout;
     std::vector<uint8_t> m_eventBuffer;
 
-    int m_stoppPipeFd[2];
+    int m_stopPipeFd[2];
     const int m_pipeReadIdx;
     const int m_pipeWriteIdx;
 

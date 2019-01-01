@@ -27,7 +27,7 @@ Inotify::Inotify()
 {
     m_stopped = false;
 
-    if (pipe2(m_stoppPipeFd, O_NONBLOCK) == -1) {
+    if (pipe2(m_stopPipeFd, O_NONBLOCK) == -1) {
         m_error = errno;
         std::stringstream errorStream;
         errorStream << "Can't initialize stop pipe ! " << strerror(m_error) << ".";
@@ -59,9 +59,9 @@ Inotify::Inotify()
         throw std::runtime_error(errorStream.str());
     }
 
-    m_stoppPipeEpollEvent.events = EPOLLIN | EPOLLET;
-    m_stoppPipeEpollEvent.data.fd = m_stoppPipeFd[m_pipeReadIdx];
-    if (epoll_ctl(m_epollFd, EPOLL_CTL_ADD, m_stoppPipeFd[m_pipeReadIdx], &m_stoppPipeEpollEvent) == -1) {
+    m_stopPipeEpollEvent.events = EPOLLIN | EPOLLET;
+    m_stopPipeEpollEvent.data.fd = m_stopPipeFd[m_pipeReadIdx];
+    if (epoll_ctl(m_epollFd, EPOLL_CTL_ADD, m_stopPipeFd[m_pipeReadIdx], &m_stopPipeEpollEvent) == -1) {
         m_error = errno;
         std::stringstream errorStream;
         errorStream << "Can't add pipe filedescriptor to epoll ! " << strerror(m_error) << ".";
@@ -72,7 +72,7 @@ Inotify::Inotify()
 Inotify::~Inotify()
 {
     epoll_ctl(m_epollFd, EPOLL_CTL_DEL, m_inotifyFd, 0);
-    epoll_ctl(m_epollFd, EPOLL_CTL_DEL, m_stoppPipeFd[m_pipeReadIdx], 0);
+    epoll_ctl(m_epollFd, EPOLL_CTL_DEL, m_stopPipeFd[m_pipeReadIdx], 0);
 
     if (!close(m_inotifyFd)) {
         m_error = errno;
@@ -82,8 +82,8 @@ Inotify::~Inotify()
         m_error = errno;
     }
 
-    close(m_stoppPipeFd[m_pipeReadIdx]);
-    close(m_stoppPipeFd[m_pipeWriteIdx]);
+    close(m_stopPipeFd[m_pipeReadIdx]);
+    close(m_stopPipeFd[m_pipeWriteIdx]);
 }
 
 void Inotify::watchFile(const std::string &filePath)
@@ -120,12 +120,6 @@ void Inotify::unwatchFile(const std::string &file)
 void Inotify::removeWatch(int wd)
 {
     int result = inotify_rm_watch(m_inotifyFd, wd);
-    if (result == -1) {
-        m_error = errno;
-        std::stringstream errorStream;
-        errorStream << "Failed to remove watch! " << strerror(m_error) << ".";
-        throw std::runtime_error(errorStream.str());
-    }
 }
 
 std::string Inotify::wdToPath(int wd)
@@ -217,7 +211,7 @@ void Inotify::run()
 void Inotify::sendStopSignal()
 {
     std::vector<std::uint8_t> buf(1,0);
-    write(m_stoppPipeFd[m_pipeWriteIdx], buf.data(), buf.size());
+    write(m_stopPipeFd[m_pipeWriteIdx], buf.data(), buf.size());
 }
 
 bool Inotify::hasStopped()
@@ -242,7 +236,7 @@ ssize_t Inotify::readEventsIntoBuffer(std::vector<uint8_t>& eventBuffer)
     }
 
     for (auto n = 0; n < nFdsReady; ++n) {
-        if (m_epollEvents[n].data.fd == m_stoppPipeFd[m_pipeReadIdx]) {
+        if (m_epollEvents[n].data.fd == m_stopPipeFd[m_pipeReadIdx]) {
             break;
         }
 

@@ -10,6 +10,5 @@ data:
   config.json: |
     {
       "test": "value",
-      "new": "blah",
-      "new2", "blah2"
+      "new2": "blah2"
     }

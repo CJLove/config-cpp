@@ -2,6 +2,16 @@
 apiVersion: v1
 kind: List
 items:
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: configcpp
+      namespace: default
+    data:
+      config.json: |
+        {
+          "test": "value"
+        }
   - apiVersion: apps/v1
     kind: Deployment
     metadata:
@@ -34,13 +44,4 @@ items:
           - name: configcpp
             configMap:
               name: configcpp
-  - apiVersion: v1
-    kind: ConfigMap
-    metadata:
-      name: configcpp
-      namespace: default
-    data:
-      config.json: |
-        {
-          "test": "value"
-        }
+
