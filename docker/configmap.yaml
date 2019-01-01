@@ -1,0 +1,15 @@
+---
+# Test updates to an existing ConfigMap mounted by a pod
+# use `kubectl replace -f configmap.yaml to apply the change
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: configcpp
+  namespace: default
+data:
+  config.json: |
+    {
+      "test": "value",
+      "new": "blah",
+      "new2", "blah2"
+    }

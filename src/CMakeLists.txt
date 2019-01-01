@@ -12,6 +12,10 @@ set (config-cpp_SRC
     config-cpp.cpp
     jsonHandler.cpp
     util.cpp
+    event.cpp
+    notification.cpp
+    filesystemEvent.cpp
+    inotify.cpp
 )
 
 if (YAML_SUPPORT)
@@ -44,4 +48,6 @@ if (JSON_SUPPORT)
     target_link_libraries( config-cpp nlohmann_json::nlohmann_json )
 endif(JSON_SUPPORT)
 
-
+if (BUILD_SHARED_LIBS)
+    install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION lib)
+endif(BUILD_SHARED_LIBS)

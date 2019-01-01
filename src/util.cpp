@@ -20,4 +20,15 @@ std::string prefix(const std::string &str) {
     return str;
 }
 
+std::string symlinkName(const std::string &str) {
+    auto symlink = str;
+    auto pos = symlink.find_last_of('/');
+    if (pos != std::string::npos) {
+        symlink.erase(pos);
+        symlink += "/";
+        symlink += "..data";
+    }
+    return symlink;
+}
+
 }  // namespace ConfigCpp

@@ -39,3 +39,13 @@ TEST(UtilTest, Prefix) {
     auto result3 = ConfigCpp::prefix(key3);
     EXPECT_EQ(result3,"key.subkey");
 }
+
+TEST(UtilTest, Symlink) {
+    std::string key1 { "/etc/config/config.json" };
+    auto result1 = ConfigCpp::symlinkName(key1);
+    EXPECT_EQ(result1,"/etc/config/..data");
+
+    std::string key2 { "config/config.json" };
+    auto result2 = ConfigCpp::symlinkName(key2);
+    EXPECT_EQ(result2,"config/..data");
+}

@@ -1,0 +1,46 @@
+---
+apiVersion: v1
+kind: List
+items:
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: configcpp
+      labels:
+        app: configcpp
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: configcpp
+      strategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxUnavailable: 50%
+          maxSurge: 1
+      template:
+        metadata:
+          labels:
+            app: configcpp
+        spec:
+          containers:
+          - name: configcpp
+            image: configdev:latest
+            imagePullPolicy: IfNotPresent
+            volumeMounts:
+              - name: configcpp
+                mountPath: /etc/config
+          volumes:
+          - name: configcpp
+            configMap:
+              name: configcpp
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: configcpp
+      namespace: default
+    data:
+      config.json: |
+        {
+          "test": "value"
+        }

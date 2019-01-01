@@ -7,7 +7,7 @@ C++ Configuration library patterned after [`viper`](https://github.com/spf13/vip
 - setting defaults
 - TODO: reading from environment variables
 - TODO: reading from command line flags
-- TODO: live watching and re-reading of config files or Kubernetes ConfigMaps
+- live watching and re-reading of config files or Kubernetes ConfigMaps
 
 ## Dependencies
 - C++14-capable compiler

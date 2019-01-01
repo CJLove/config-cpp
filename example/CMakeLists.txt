@@ -17,6 +17,12 @@ if (JSON_SUPPORT)
     add_executable( json json.cpp json-config.cpp )
 
     target_link_libraries( json config-cpp )
+
+    add_executable( watch watch.cpp )
+
+    target_link_libraries( watch config-cpp )
+
+    install(TARGETS watch RUNTIME DESTINATION bin)
 endif(JSON_SUPPORT)
 
 

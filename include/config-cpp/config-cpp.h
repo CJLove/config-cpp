@@ -90,7 +90,7 @@ namespace ConfigCpp {
          * 
          * @param function - std::function argument
          */
-        void OnConfigChange(Callback &function);
+        void OnConfigChange(Callback function);
 
         /**
          * @brief Read in config file located anywhere in the search path

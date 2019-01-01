@@ -1,3 +1,4 @@
+#include <chrono>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -7,13 +8,16 @@
 
 #include "configCppData.h"
 #include "default.h"
+#include "inotify.h"
+#include "notification.h"
+#include "util.h"
 
 #if defined(JSON_SUPPORT)
-    #include "jsonHandler.h"
+#include "jsonHandler.h"
 #endif
 
 #if defined(YAML_SUPPORT)
-    #include "yamlHandler.h"
+#include "yamlHandler.h"
 #endif
 
 namespace ConfigCpp {
@@ -22,27 +26,63 @@ namespace ConfigCpp {
  * @brief Private implementation struct
  */
 struct ConfigCpp::st_impl {
+    ConfigCpp &m_config;
     int m_argc;
     char **m_argv;
     std::string m_name;
     std::vector<std::string> m_path;
-    Callback *m_callback;
+    Callback m_callback;
     ConfigType m_type;
+    std::string m_configFileName;
     std::unique_ptr<ConfigCppBase> m_data;
+    std::unique_ptr<Inotify> m_inotify;
     DefaultValues m_defaults;
 
-    st_impl(int argc, char **argv) : m_argc(argc), m_argv(argv), m_type(ConfigType::UNKNOWN) {}
+    void handleNotification(Notification notification);
+    void handleUnexpectedNotification(Notification notification);
 
-    st_impl(int argc, char **argv, const std::string &name, const std::string &path)
-        : m_argc(argc), m_argv(argv), m_name(name), m_type(ConfigType::UNKNOWN) {
+    st_impl(ConfigCpp &config, int argc, char **argv)
+        : m_config(config), m_argc(argc), m_argv(argv), m_type(ConfigType::UNKNOWN), m_inotify(std::make_unique<Inotify>()) {}
+
+    st_impl(ConfigCpp &config, int argc, char **argv, const std::string &name, const std::string &path)
+        : m_config(config),
+          m_argc(argc),
+          m_argv(argv),
+          m_name(name),
+          m_type(ConfigType::UNKNOWN),
+          m_inotify(std::make_unique<Inotify>()) {
         m_path.push_back(path);
+    }
+
+    ~st_impl() {
+        // Stop the inotify thread if it is running
+        if (!m_inotify->hasStopped())
+            m_inotify->stop();
     }
 };
 
-ConfigCpp::ConfigCpp(int argc, char **argv) : m_pImpl(std::make_unique<ConfigCpp::st_impl>(argc, argv)) {}
+void ConfigCpp::st_impl::handleNotification(Notification notification) {
+    std::cout << "Registered Event " << notification.m_event << " on " << notification.m_path << " at "
+              << notification.m_time.time_since_epoch().count() << " was triggered\n";
+
+    if (m_callback)
+        m_callback(m_config);
+
+    // (re)-register watch for the symlink
+    m_inotify->unwatchFile(symlinkName(m_configFileName));
+    m_inotify->watchFile(symlinkName(m_configFileName));
+
+}
+
+void ConfigCpp::st_impl::handleUnexpectedNotification(Notification notification) {
+    std::cout << "Unregistered Event " << notification.m_event << " on " << notification.m_path << " at "
+              << notification.m_time.time_since_epoch().count() << " was triggered\n";
+}
+
+ConfigCpp::ConfigCpp(int argc, char **argv) : m_pImpl(std::make_unique<ConfigCpp::st_impl>(*this, argc, argv)) {}
 
 ConfigCpp::ConfigCpp(int argc, char **argv, const std::string &name, const std::string &path)
-    : m_pImpl(std::make_unique<ConfigCpp::st_impl>(argc, argv, name, path)) {}
+    : m_pImpl(std::make_unique<ConfigCpp::st_impl>(*this, argc, argv, name, path)) {}
 
 ConfigCpp::~ConfigCpp() {}
 
@@ -50,9 +90,30 @@ void ConfigCpp::SetConfigName(const std::string &name) { m_pImpl->m_name = name;
 
 void ConfigCpp::AddConfigPath(const std::string &path) { m_pImpl->m_path.push_back(path); }
 
-void ConfigCpp::WatchConfig() {}
+void ConfigCpp::WatchConfig() {
+    std::cout << "Adding watch for " << m_pImpl->m_configFileName << "\n";
+    m_pImpl->m_inotify->watchFile(m_pImpl->m_configFileName);
+    // In case this is a Kubernetes ConfigMap, also register a watch for the symlink, which gets
+    // removed and replaced when the ConfigMap is updated.
+    m_pImpl->m_inotify->watchFile(symlinkName(m_pImpl->m_configFileName));
+    auto events = {
+        Event::modify,
+        Event::remove,
+    };
+    auto handler = [this](Notification note) { this->m_pImpl->handleNotification(note); };
 
-void ConfigCpp::OnConfigChange(Callback &callback) { m_pImpl->m_callback = &callback; }
+    for (const auto &event : events) {
+        // m_pImpl->m_inotify->setEventMask(m_pImpl->m_inotify->getEventMask() | static_cast<std::uint32_t>(event));
+        m_pImpl->m_inotify->onEvent(event, handler);
+    }
+    // For troubleshooting:
+    // auto unexpectedHandler = [this](Notification note) { this->m_pImpl->handleUnexpectedNotification(note); };
+    // m_pImpl->m_inotify->onUnexpectedEvent(unexpectedHandler);
+
+    m_pImpl->m_inotify->start();
+}
+
+void ConfigCpp::OnConfigChange(Callback callback) { m_pImpl->m_callback = callback; }
 
 bool ConfigCpp::ReadInConfig() {
     static std::vector<std::string> yamlExtensions = {".yml", ".yaml"};
@@ -66,26 +127,36 @@ bool ConfigCpp::ReadInConfig() {
                 std::cout << "Trying " << name + ext << "\n";
                 std::ifstream file(name + ext);
                 if (file.good()) {
-                    std::stringstream stream;
-                    stream << file.rdbuf();
-                    m_pImpl->m_type = ConfigType::YAML;
-                    m_pImpl->m_data.reset(new ConfigCppData<YamlHandler>(stream.str(), m_pImpl->m_defaults));
-                    return true;
+                    try {
+                        std::stringstream stream;
+                        stream << file.rdbuf();
+                        m_pImpl->m_configFileName = name + ext;
+                        m_pImpl->m_type = ConfigType::YAML;
+                        m_pImpl->m_data.reset(new ConfigCppData<YamlHandler>(stream.str(), m_pImpl->m_defaults));
+                        return true;
+                    } catch (...) {
+                        std::cout << "Failed to read " << name + ext << "\n";
+                    }
                 }
             }
         }
 #endif
-#if defined(JSON_SUPPORT)        
+#if defined(JSON_SUPPORT)
         if (m_pImpl->m_type == ConfigType::UNKNOWN || m_pImpl->m_type == ConfigType::JSON) {
             for (const auto ext : jsonExtensions) {
                 std::cout << "Trying " << name + ext << "\n";
                 std::ifstream file(name + ext);
                 if (file.good()) {
-                    std::stringstream stream;
-                    stream << file.rdbuf();
-                    m_pImpl->m_type = ConfigType::JSON;
-                    m_pImpl->m_data.reset(new ConfigCppData<JsonHandler>(stream.str(), m_pImpl->m_defaults));
-                    return true;
+                    try {
+                        std::stringstream stream;
+                        stream << file.rdbuf();
+                        m_pImpl->m_configFileName = name + ext;
+                        m_pImpl->m_type = ConfigType::JSON;
+                        m_pImpl->m_data.reset(new ConfigCppData<JsonHandler>(stream.str(), m_pImpl->m_defaults));
+                        return true;
+                    } catch (...) {
+                        std::cout << "Failed to read " << name + ext << "\n";
+                    }
                 }
             }
         }
@@ -94,7 +165,7 @@ bool ConfigCpp::ReadInConfig() {
     return false;
 }
 
-std::string ConfigCpp::GetConfigData() const { 
+std::string ConfigCpp::GetConfigData() const {
     if (m_pImpl->m_data)
         return m_pImpl->m_data->GetConfig();
     return "";
