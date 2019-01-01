@@ -1,12 +1,12 @@
-# Dockerfile to build a "fedoradev" image that can be used in
+# Dockerfile that can produce an "alpinedev" image that can be used in
 # a multi-stage Dockerfile to produce a Fedora-based docker image
 #
-# docker build -t fedoradev:latest .
+# docker build -t alpinedev:latest .
 #
-FROM fedora:28
+FROM alpine:3.7
 
-RUN \
-    dnf install -y cmake gcc-c++ make gdb git \
+RUN apk add --no-cache \
+    bash git g++ cmake make \
     && cd /home \
     && git clone https://github.com/nlohmann/json.git \
     && cd /home/json \

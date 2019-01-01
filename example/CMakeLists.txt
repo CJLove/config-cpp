@@ -18,11 +18,11 @@ if (JSON_SUPPORT)
 
     target_link_libraries( json config-cpp )
 
-    add_executable( watch watch.cpp )
+    add_executable( watcher watcher.cpp )
 
-    target_link_libraries( watch config-cpp )
+    target_link_libraries( watcher config-cpp )
 
-    install(TARGETS watch RUNTIME DESTINATION bin)
+    install(TARGETS watcher RUNTIME DESTINATION bin)
 endif(JSON_SUPPORT)
 
 

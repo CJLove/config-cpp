@@ -9,6 +9,7 @@ metadata:
 data:
   config.json: |
     {
-      "test": "value",
-      "new2": "blah2"
+      "new1": "blah1",
+      "new2": "blah2",
+      "new3": "blah3"
     }

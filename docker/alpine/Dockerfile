@@ -1,9 +1,9 @@
-# Multi-stage Dockerfile to build a "configdev" image containing the watcher example
+# Multi-stage Dockerfile to build a "configdev" image containing the watch example
 #
 # From top directory:
-# docker build -t configdev:latest -f docker/fedora/Dockerfile .
+# docker build -t configdev:latest -f docker/alpine/Dockerfile .
 #
-FROM fedoradev:latest as builder
+FROM alpinedev:latest as builder
 
 ADD . /home/config-cpp
 
@@ -16,14 +16,14 @@ RUN \
     && make watcher \
     && make install
 
-FROM fedora:28
+FROM alpine:3.7
 
 RUN \
-    dnf install -y libstdc++ \
+    apk add --nocache libstdc++ \
     && mkdir -p /etc/config
 
 COPY --from=builder /home/config-cpp/inputs/json/config.json /etc/config/
-COPY --from=builder /home/config-cpp/lib/lib*.so /usr/lib64
-COPY --from=builder /home/config-cpp/bin/watcher /usr/bin/er
+COPY --from=builder /home/config-cpp/lib/lib*.so /usr/lib
+COPY --from=builder /home/config-cpp/bin/watcher /usr/bin/
 
 ENTRYPOINT [ "/usr/bin/watcher" ]
