@@ -9,6 +9,13 @@ C++ Configuration library patterned after [`viper`](https://github.com/spf13/vip
 - TODO: reading from command line flags
 - live watching and re-reading of config files or Kubernetes ConfigMaps
 
+ConfigCpp uses the following precedence order.  Each item takes precedence over the item(s) below it:
+
+- TODO: command-line flags
+- TODO: environment variables
+- configuration file
+- default
+
 ## Dependencies
 - C++14-capable compiler
 - GoogleTest (unit testing)
@@ -64,4 +71,25 @@ TBD
 ### Command-line Flags
 TBD
 
+### Retrieving Configuration Values
 
+```c++
+std::string stringVal = config.GetString("key");
+bool flagVal = config.GetBool("key.subkey");
+int intVal = config.GetInt("key.intVal");
+double doubleVal = config.GetDouble("key.double");
+```
+
+### Unmarshalling to native types
+See the JSON and YAML libraries for requirements.
+```c++
+JsonType myJsonConfig;
+if (config.UnmarshalJson<JsonType>(myJsonConfig)) {
+    ...
+}
+
+YamlType myYamlConfig;
+if (config.UnmarshalYaml<YamlType>(myYamlConfig)) {
+    ...
+}
+```

@@ -1,7 +1,7 @@
 # Example programs
 
-- `json` - application supporting a JSON configuration file, including unmarshaling config data into a native struct.
-- `yaml` - application supporting a YAML configuration file, including unmarshaling config data into a native struct.
+- `json` - application supporting a JSON configuration file, including unmarshalling config data into a native struct.
+- `yaml` - application supporting a YAML configuration file, including unmarshalling config data into a native struct.
 - `watcher` - application supporting a JSON configuration file and registering for configuration file updates.
 
 ## Kubernetes deployment
