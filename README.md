@@ -3,7 +3,7 @@
 C++ Configuration library patterned after [`viper`](https://github.com/spf13/viper) package for golang.  It is designed to work within an application and handle configuration needs.
 
 - framework for companion libraries which can read from JSON, YAML
-- unmarshaling configuration data to native C++ types
+- unmarshalling configuration data to native C++ types
 - setting defaults
 - TODO: reading from environment variables
 - TODO: reading from command line flags
