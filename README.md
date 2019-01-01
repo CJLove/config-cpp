@@ -18,5 +18,50 @@ Also one or both of the following:
 - Json for Modern C++ (https://github.com/nlohmann/json)
 - Yaml-cpp (https://github.com/jbeder/yaml-cpp)
 
+## Basic Usage
+
+### Reading Config Files
+
+```c++
+ConfigCpp::ConfigCpp config;
+config.SetConfigName("config"); // Name of config file minus extension
+config.AddConfigPath("/etc/appname/"); // Path to look for config files
+config.AddConfigPath("/home/.appname/"); // call as many times as needed
+config.AddConfigPath(".");
+if (!config.ReadInConfig()) {
+    std::cerr << "Failed to read in config\n";
+}
+```
+
+### Watching and Re-reading Config Files
+
+```c++
+// Callback function called upon config file change
+void onConfigChange(ConfigCpp::ConfigCpp &config) {
+    std::cout << "Config changed\n";
+    config.ReadInConfig();
+    ...
+}
+
+config.OnConfigChange(onConfigChange);
+config.WatchConfig();
+```
+
+### Setting Defaults
+
+Default values can be specified for keys in case values aren't specified in config file(s), environment variables, or command-line flags.
+
+```c++
+config.SetDefault("key1",false);
+config.SetDefault("key2",255);
+config.SetDefault("key3",0.95);
+config.SetDefault("logLevel", "trace");
+```
+
+### Environment Variables
+TBD
+
+### Command-line Flags
+TBD
 
 
