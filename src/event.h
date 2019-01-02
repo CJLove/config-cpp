@@ -1,12 +1,12 @@
 #pragma once
 #include <cstdint>
-#include <type_traits>
 #include <iostream>
 #include <sys/inotify.h>
+#include <type_traits>
 
 namespace ConfigCpp {
 
-    enum class Event : std::uint32_t {
+enum class Event : std::uint32_t {
     access = IN_ACCESS,
     attrib = IN_ATTRIB,
     close_write = IN_CLOSE_WRITE,
@@ -29,22 +29,17 @@ namespace ConfigCpp {
     all = IN_ALL_EVENTS
 };
 
-constexpr Event operator&(Event lhs, Event rhs)
-{
-    return static_cast<Event>(
-        static_cast<std::underlying_type<Event>::type>(lhs)
-        & static_cast<std::underlying_type<Event>::type>(rhs));
+constexpr Event operator&(Event lhs, Event rhs) {
+    return static_cast<Event>(static_cast<std::underlying_type<Event>::type>(lhs) &
+                              static_cast<std::underlying_type<Event>::type>(rhs));
 }
 
-constexpr Event operator|(Event lhs, Event rhs)
-{
-    return static_cast<Event>(
-        static_cast<std::underlying_type<Event>::type>(lhs)
-        | static_cast<std::underlying_type<Event>::type>(rhs));
+constexpr Event operator|(Event lhs, Event rhs) {
+    return static_cast<Event>(static_cast<std::underlying_type<Event>::type>(lhs) |
+                              static_cast<std::underlying_type<Event>::type>(rhs));
 }
-
 
 std::ostream& operator<<(std::ostream& stream, const Event& event);
 bool containsEvent(const Event& allEvents, const Event& event);
 
-}
+}  // namespace ConfigCpp

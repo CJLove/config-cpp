@@ -30,4 +30,4 @@ private:
     json m_json;
 };
 
-}
+}  // namespace ConfigCpp

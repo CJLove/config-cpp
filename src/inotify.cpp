@@ -119,7 +119,7 @@ void Inotify::unwatchFile(const std::string &file)
 
 void Inotify::removeWatch(int wd)
 {
-    int result = inotify_rm_watch(m_inotifyFd, wd);
+    (void)inotify_rm_watch(m_inotifyFd, wd);
 }
 
 std::string Inotify::wdToPath(int wd)
@@ -253,9 +253,9 @@ ssize_t Inotify::readEventsIntoBuffer(std::vector<uint8_t>& eventBuffer)
 }
 
 void Inotify::readEventsFromBuffer(
-    uint8_t* buffer, int length, std::vector<FileSystemEvent>& events)
+    uint8_t* buffer, ssize_t length, std::vector<FileSystemEvent>& events)
 {
-    int i = 0;
+    ssize_t i = 0;
     while (i < length) {
         inotify_event* event = ((struct inotify_event*)&buffer[i]);
 

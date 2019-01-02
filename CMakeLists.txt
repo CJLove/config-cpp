@@ -1,6 +1,14 @@
 cmake_minimum_required(VERSION 3.1)
 
-project(cpp-yaml-playground)
+project(config-cpp)
+
+#---------------------------------------------------------------------------------------
+# Project options
+#---------------------------------------------------------------------------------------
+option(YAML_SUPPORT "Support YAML config files" ON)
+option(JSON_SUPPORT "Support JSON config files" ON)
+option(BUILD_SHARED_LIBS "Build Shared Libraries" OFF)
+option(BUILD_STATIC_LIBS "Build Static Libraries" ON)
 
 #---------------------------------------------------------------------------------------
 # compiler config
@@ -18,13 +26,9 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCH
 
 endif()
 
-option(YAML_SUPPORT "Support YAML config files" ON)
-
-option(JSON_SUPPORT "Support JSON config files" ON)
-
-option(BUILD_SHARED_LIBS "Build Shared Libraries" OFF)
-
-option(BUILD_STATIC_LIBS "Build Static Libraries" ON)
+#---------------------------------------------------------------------------------------
+# Dependencies
+#---------------------------------------------------------------------------------------
 
 if (YAML_SUPPORT)
     # yaml-cpp library dependency
@@ -49,10 +53,72 @@ if (GTEST_FOUND)
     option (BUILD_TESTS "Build unit tests." ON)
 endif (GTEST_FOUND)
 
+#---------------------------------------------------------------------------------------
+# Sources, headers, directories and libs
+#---------------------------------------------------------------------------------------
+# From http://www.cmake.org/pipermail/cmake/2010-March/035992.html:
+# function to collect all the sources from sub-directories
+# into a single list
+function(add_sources)
+  get_property(is_defined GLOBAL PROPERTY SRCS_LIST DEFINED)
+  if(NOT is_defined)
+    define_property(GLOBAL PROPERTY SRCS_LIST
+      BRIEF_DOCS "List of source files"
+      FULL_DOCS "List of all source files in the entire project")
+  endif()
+  # make absolute paths
+  set(SRCS)
+  foreach(s IN LISTS ARGN)
+    if(NOT IS_ABSOLUTE "${s}")
+      get_filename_component(s "${s}" ABSOLUTE)
+    endif()
+    list(APPEND SRCS "${s}")
+  endforeach()
+  # append to global list
+  set_property(GLOBAL APPEND PROPERTY SRCS_LIST "${SRCS}")
+endfunction(add_sources)
+
+file(GLOB sources "src/[a-zA-Z]*.cpp")
+file(GLOB_RECURSE public_headers "include/config-cpp/[a-zA-Z]*.h")
+file(GLOB private_headers "src/[a-zA-Z]*.h")
+file(GLOB examples "examples/[a-zA-Z]*.[ch]*")
+file(GLOB tests "test/[a-zA-Z]*.cpp")
+
+set(library_sources
+    ${sourcse}
+    ${public_headers}
+    ${private_headers}
+    ${examples}
+    ${tests}
+)
+add_sources(${library_sources})
+
+if(VERBOSE)
+    message(STATUS "sources: ${sources}")
+    message(STATUS "public_headers: ${public_headers}")
+    message(STATUS "private_headers: ${private_headers}")
+    message(STATUS "examples: ${examples}")
+    message(STATUS "tests: ${tests}")
+endif(VERBOSE)
+
 add_subdirectory(src)
-
 add_subdirectory(example)
-
 if (BUILD_TESTS)
     add_subdirectory(test)
 endif(BUILD_TESTS)
+
+#---------------------------------------------------------------------------------------
+# Addons
+#---------------------------------------------------------------------------------------
+
+# Formatting
+get_property(all_sources GLOBAL PROPERTY SRCS_LIST)
+add_custom_target(format
+    COMMAND clang-format --style=file -i ${all_sources}
+    COMMENT "Running clang-format"
+    VERBATIM)
+
+
+
+
+

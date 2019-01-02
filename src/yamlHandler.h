@@ -29,4 +29,4 @@ private:
     YAML::Node m_yaml;
 };
 
-}
+}  // namespace ConfigCpp

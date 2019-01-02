@@ -16,10 +16,9 @@
 #include <thread>
 #include <time.h>
 #include <vector>
-#include <thread>
 
-#include "notification.h"
 #include "filesystemEvent.h"
+#include "notification.h"
 
 #define MAX_EVENTS 4096
 #define MAX_EPOLL_EVENTS 10
@@ -52,7 +51,7 @@ private:
     bool isOnTimeout(const std::chrono::steady_clock::time_point &eventTime);
     void removeWatch(int wd);
     ssize_t readEventsIntoBuffer(std::vector<uint8_t> &eventBuffer);
-    void readEventsFromBuffer(uint8_t *buffer, int length, std::vector<FileSystemEvent> &events);
+    void readEventsFromBuffer(uint8_t *buffer, ssize_t length, std::vector<FileSystemEvent> &events);
     void filterEvents(std::vector<FileSystemEvent> &events, std::queue<FileSystemEvent> &eventQueue);
     void sendStopSignal();
     bool isDirectory(const std::string &path);

@@ -8,7 +8,7 @@ namespace YamlImpl {
 
 /**
  * @brief Unmarshal YAML data to a native datatype
- * 
+ *
  * @tparam T - User-provided datatype
  * @param t - reference to a variable of user-provided datatype
  * @param str - YAML data
