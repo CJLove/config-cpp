@@ -7,6 +7,8 @@ project(config-cpp)
 #---------------------------------------------------------------------------------------
 option(YAML_SUPPORT "Support YAML config files" ON)
 option(JSON_SUPPORT "Support JSON config files" ON)
+option(BUILD_EXAMPLES "Build examples" ON)
+option(BUILD_TESTS "Build unit tests." ON)
 option(BUILD_SHARED_LIBS "Build Shared Libraries" OFF)
 option(BUILD_STATIC_LIBS "Build Static Libraries" ON)
 
@@ -49,9 +51,6 @@ find_package(Threads)
 
 # Google Test
 find_package(GTest)
-if (GTEST_FOUND)
-    option (BUILD_TESTS "Build unit tests." ON)
-endif (GTEST_FOUND)
 
 #---------------------------------------------------------------------------------------
 # Sources, headers, directories and libs
@@ -102,7 +101,9 @@ if(VERBOSE)
 endif(VERBOSE)
 
 add_subdirectory(src)
-add_subdirectory(example)
+if (BUILD_EXAMPLES)
+    add_subdirectory(example)
+endif(BUILD_EXAMPLES)
 if (BUILD_TESTS)
     add_subdirectory(test)
 endif(BUILD_TESTS)
