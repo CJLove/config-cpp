@@ -12,6 +12,10 @@ option(BUILD_TESTS "Build unit tests." ON)
 option(BUILD_SHARED_LIBS "Build Shared Libraries" OFF)
 option(BUILD_STATIC_LIBS "Build Static Libraries" ON)
 
+option(ENABLE_CLANG_TIDY "Enable testing with clang-tidy" FALSE)
+option(ENABLE_CPPCHECK "Enable testing with cppcheck" FALSE)
+
+
 #---------------------------------------------------------------------------------------
 # compiler config
 #---------------------------------------------------------------------------------------
@@ -111,6 +115,25 @@ endif(BUILD_TESTS)
 #---------------------------------------------------------------------------------------
 # Addons
 #---------------------------------------------------------------------------------------
+# clang-tidy
+if(ENABLE_CLANG_TIDY)
+  find_program(CLANGTIDY clang-tidy)
+  if(CLANGTIDY)
+    set(CMAKE_CXX_CLANG_TIDY ${CLANGTIDY})
+  else()
+    message(SEND_ERROR "clang-tidy requested but executable not found")
+  endif()
+endif()
+
+# cppcheck
+if(ENABLE_CPPCHECK)
+  find_program(CPPCHECK cppcheck)
+  if(CPPCHECK)
+    set(CMAKE_CXX_CPPCHECK ${CPPCHECK} --suppress=syntaxError --enable=all --inconclusive)
+  else()
+    message(SEND_ERROR "cppcheck requested but executable not found")
+  endif()
+endif()
 
 # Formatting
 get_property(all_sources GLOBAL PROPERTY SRCS_LIST)
