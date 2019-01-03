@@ -46,7 +46,7 @@ before_install:
   # Install yaml-cpp
   - wget https://github.com/jbeder/yaml-cpp/archive/yaml-cpp-0.6.2.tar.gz -O /tmp/yaml.tar.gz
   - tar zxf /tmp/yaml.tar.gz
-  - pushd yaml-* && mkdir build && cd build && cmake -DBUILD_SHARED_LIBS=OFF -DYAML_CPP_BUILD_TESTS=OFF .. && sudo make install && popd
+  - pushd yaml-* && mkdir build && cd build && cmake -DBUILD_SHARED_LIBS=ON -DYAML_CPP_BUILD_TESTS=OFF .. && sudo make install && popd
 
 script:
   - mkdir build
