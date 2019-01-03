@@ -27,7 +27,7 @@ before_install:
   # Install googletest
   - wget https://github.com/google/googletest/archive/release-1.8.1.tar.gz -O /tmp/gtest.tar.gz
   - tar zxf /tmp/gtest.tar.gz
-  - pushd google-test* && mkdir build && cd build && cmake .. && sudo make install && popd
+  - pushd googletest-* && mkdir build && cd build && cmake .. && sudo make install && popd
 
   # Install json
   - wget https://github.com/nlohmann/json/archive/v3.5.0.tar.gz -O /tmp/json.tar.gz
