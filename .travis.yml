@@ -11,6 +11,7 @@ sudo: required
 dist: trusty
 
 matrix:
+  fast_finish: true
   include:
 
   - os: linux
@@ -21,7 +22,24 @@ matrix:
       apt:
         sources: ['ubuntu-toolchain-r-test']
         packages: ['g++-6' ]
-    
+
+  - os: linux
+    compiler: gcc
+    env:
+      - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+    addons:
+      apt:
+        sources: ['ubuntu-toolchain-r-test']
+        packages: ['g++-7' ]  
+
+  - os: linux
+    compiler: gcc
+    env:
+      - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
+    addons:
+      apt:
+        sources: ['ubuntu-toolchain-r-test']
+        packages: ['g++-8' ] 
 
 before_install:
   - eval "${MATRIX_EVAL}"
