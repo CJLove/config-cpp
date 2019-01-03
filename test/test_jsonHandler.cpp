@@ -27,6 +27,31 @@ static const std::string jsonLiteral = R"({
 }
 )";
 
+static const std::string jsonBadLiteral = R"({
+    "top-string": "bob",
+    "top-int": 10,
+    "top-bool": true,
+    "top-double": 1.1234,
+    "top-list": [ "item1", "item2", "item3" ],
+    "top-dict": { "key1": "value1", "key2": "value2", "key3": "value3" },
+    "nested-list": [
+        [ "nested-item1-subitem1", "nested-item1-subitem2" ],
+        [ "nested-item2-subitem1", "nested-item2-subitem2" ]
+    ],
+    "nested-dict": {
+        "key1": {
+            "key1-subkey1": "value1-1",
+            "key1-subkey2": "value1-2"
+        },
+        "key2": {
+            "key2-subkey1": "value2-1"
+            "key2-subkey2": "value2-2"
+        }
+    }
+
+}
+)";
+
 TEST(JsonHandlerTest, IsSet) {
     ConfigCpp::DefaultValues defaults;
     ConfigCpp::JsonHandler h(jsonLiteral, defaults);
@@ -135,4 +160,21 @@ TEST(JsonHandlerTest, NewDefaults) {
     // EXPECT_EQ(h.GetString("nested-dict.key2.key2-subkey3"),"another default");
 
     std::cout << "Config data with defaults:\n" << h.GetConfig() << "\n";
+}
+
+TEST(JsonHandlerTest, InvalidJson) {
+    ConfigCpp::DefaultValues defaults;
+
+    try { 
+    ConfigCpp::JsonHandler h(jsonBadLiteral,defaults);
+
+        FAIL() << "expected std::runtime_error";
+
+    }
+    catch (std::runtime_error &e) {
+
+    }
+    catch (...) {
+        FAIL() << "expected std::runtime_error";
+    }
 }

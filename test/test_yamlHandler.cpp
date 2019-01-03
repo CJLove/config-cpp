@@ -31,6 +31,12 @@ nested-dict:
     key2-subkey2: value2-2
 )";
 
+static const std::string yamlBadLiteral = R"(---
+top-string: bob
+  top-int: 10
+top-double: 1.1234
+)";
+
 TEST(YamlHandlerTest, IsSet) {
     ConfigCpp::DefaultValues defaults;
     ConfigCpp::YamlHandler h(yamlLiteral, defaults);
@@ -141,4 +147,18 @@ TEST(YamlHandlerTest, NewDefaults) {
     // EXPECT_EQ(h.GetString("nested-dict.key2.key2-subkey3"),"another default");
 
     std::cout << "Config data with defaults:\n" << h.GetConfig() << "\n";
+}
+
+TEST(YamlHandlerTest, InvalidYaml) {
+    ConfigCpp::DefaultValues defaults;
+    try {
+        ConfigCpp::YamlHandler h(yamlBadLiteral, defaults);
+        FAIL() << "Expected std::runtime_error";
+    }
+    catch (std::runtime_error &e) {
+
+    }
+    catch (...) {
+        FAIL() << "Expected std::runtime_error";
+    }
 }

@@ -6,7 +6,12 @@
 namespace ConfigCpp {
 
 JsonHandler::JsonHandler(const std::string &data, const DefaultValues &defaults) {
-    m_json = json::parse(data);
+    try {
+        m_json = json::parse(data);
+    }
+    catch (...) {
+        throw std::runtime_error("Invalid json received");
+    }
 
     for (const auto &def : defaults) {
         json node;

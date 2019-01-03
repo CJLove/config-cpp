@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/CJLove/config-cpp.svg?branch=master)](https://travis-ci.org/CJLove/config-cpp)
+
+
 # config-cpp
 
 C++ Configuration library patterned after [`viper`](https://github.com/spf13/viper) package for golang.  It is designed to work within an application and handle configuration needs.

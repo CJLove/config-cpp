@@ -9,6 +9,12 @@ namespace ConfigCpp {
 
 YamlHandler::YamlHandler(const std::string &data, const DefaultValues &defaults) : m_yaml(YAML::Load(data)) 
 {
+    try {
+        m_yaml = YAML::Load(data);
+    }
+    catch (...) {
+        throw std::runtime_error("Invalid YAML received");
+    }
     for (const auto &def: defaults) {
         YAML::Node node;
         auto keys = split(def.m_key, '.');
