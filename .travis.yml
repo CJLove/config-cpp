@@ -1,19 +1,26 @@
 # Build matrix / environment variable are explained on:
 # http://about.travis-ci.org/docs/user/build-configuration/
-# This file can be validated on:
-# http://lint.travis-ci.org/
 #
 # travis-ci.org specification for config-cpp
 # 
 language: cpp
-compiler:
-  - gcc
-  # - clang
 os:
   - linux
 
 sudo: required
 dist: trusty
+
+matrix:
+  include:
+
+  - os: linux
+    compiler: gcc
+    env: COMPILER=g++-6
+    addons:
+      apt:
+        sources: ['ubuntu-toolchain-r-test']
+        packages: ['g++-6' ]
+    
 
 before_install:
 
