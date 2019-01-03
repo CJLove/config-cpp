@@ -24,20 +24,20 @@ before_install:
   # install lcov to coveralls conversion + upload tool
   - gem install coveralls-lcov
 
-  # Install google test (gtest)
-  - sudo apt-get install -y libgtest-dev
-
   - pushd /usr/src/gtest && sudo cmake . && sudo make && sudo mv libg* /usr/lib && sudo ldconfig && popd
+  - wget https://github.com/google/googletest/archive/release-1.8.1.tar.gz -O /tmp/gtest.tar.gz
+  - tar zxf /tmp/gtest.tar.gz
+  - pushd google-test* && mkdir build && cd build && cmake .. && sudo make install && popd
 
   # Install json
   - wget https://github.com/nlohmann/json/archive/v3.5.0.tar.gz -O /tmp/json.tar.gz
   - tar zxf /tmp/json.tar.gz
-  - pushd json-* && mkdir build && cd build && cmake -DJSON_BuildTests=OFF .. && make install && popd
+  - pushd json-* && mkdir build && cd build && cmake -DJSON_BuildTests=OFF .. && sudo make install && popd
 
   # Install yaml-cpp
   - wget https://github.com/jbeder/yaml-cpp/archive/yaml-cpp-0.6.2.tar.gz -O /tmp/yaml.tar.gz
   - tar zxf /tmp/yaml.tar.gz
-  - pushd yaml-* && mkdir build && cd build && cmake -DBUILD_SHARED_LIBS=OFF -DYAML_CPP_BUILD_TESTS=OFF .. && make install && popd
+  - pushd yaml-* && mkdir build && cd build && cmake -DBUILD_SHARED_LIBS=OFF -DYAML_CPP_BUILD_TESTS=OFF .. && sudo make install && popd
 
 script:
   - mkdir build
