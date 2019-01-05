@@ -8,10 +8,15 @@ include_directories(
     .
 )
 
+if (BUILD_COVERAGE)
+    add_definitions( --coverage )
+endif (BUILD_COVERAGE)
+
 set (config-cpp_SRC
     config-cpp.cpp
     jsonHandler.cpp
     util.cpp
+    default.cpp
     event.cpp
     notification.cpp
     filesystemEvent.cpp
@@ -47,6 +52,10 @@ endif(YAML_SUPPORT)
 if (JSON_SUPPORT)
     target_link_libraries( config-cpp nlohmann_json::nlohmann_json )
 endif(JSON_SUPPORT)
+
+if (BUILD_COVERAGE)
+    target_link_libraries( config-cpp gcov )
+endif (BUILD_COVERAGE)
 
 if (BUILD_SHARED_LIBS)
     install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION lib)

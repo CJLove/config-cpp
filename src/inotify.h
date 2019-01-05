@@ -54,7 +54,6 @@ private:
     void readEventsFromBuffer(uint8_t *buffer, ssize_t length, std::vector<FileSystemEvent> &events);
     void filterEvents(std::vector<FileSystemEvent> &events, std::queue<FileSystemEvent> &eventQueue);
     void sendStopSignal();
-    bool isDirectory(const std::string &path);
     bool exists(const std::string &path);
 
 private:

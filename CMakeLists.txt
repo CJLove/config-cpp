@@ -9,11 +9,15 @@ option(YAML_SUPPORT "Support YAML config files" ON)
 option(JSON_SUPPORT "Support JSON config files" ON)
 option(BUILD_EXAMPLES "Build examples" ON)
 option(BUILD_TESTS "Build unit tests." ON)
+option(BUILD_COVERAGE "Build for code coverage." OFF)
 option(BUILD_SHARED_LIBS "Build Shared Libraries" OFF)
 option(BUILD_STATIC_LIBS "Build Static Libraries" ON)
 
 option(ENABLE_CLANG_TIDY "Enable testing with clang-tidy" FALSE)
 option(ENABLE_CPPCHECK "Enable testing with cppcheck" FALSE)
+
+set (CMAKE_MODULE_PATH  ${CMAKE_MODULE_PATH}
+                        ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
 
 
 #---------------------------------------------------------------------------------------
@@ -109,6 +113,10 @@ if (BUILD_EXAMPLES)
     add_subdirectory(example)
 endif(BUILD_EXAMPLES)
 if (BUILD_TESTS)
+    if (BUILD_COVERAGE)
+        include (CodeCoverage)
+        setup_target_for_coverage( ConfigCppCoverage test/ConfigCppTests coverage )
+    endif (BUILD_COVERAGE)
     add_subdirectory(test)
 endif(BUILD_TESTS)
 

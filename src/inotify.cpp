@@ -71,6 +71,8 @@ Inotify::Inotify()
 
 Inotify::~Inotify()
 {
+    stop();
+    
     epoll_ctl(m_epollFd, EPOLL_CTL_DEL, m_inotifyFd, 0);
     epoll_ctl(m_epollFd, EPOLL_CTL_DEL, m_stopPipeFd[m_pipeReadIdx], 0);
 
@@ -168,6 +170,8 @@ void Inotify::stop()
 {
     m_stopped = true;
     sendStopSignal();
+    if (m_thread.joinable())
+        m_thread.join();
 }
 
 void Inotify::start()
@@ -274,9 +278,6 @@ void Inotify::readEventsFromBuffer(
         path += std::string(event->name,event->len);
         }
 
-        // if (isDirectory(path)) {
-        //     event->mask |= IN_ISDIR;
-        // }
         FileSystemEvent fsEvent(event->wd, event->mask, path, std::chrono::steady_clock::now());
 
         if (!fsEvent.m_path.empty()) {
@@ -304,14 +305,6 @@ void Inotify::filterEvents(
             eventIt++;
         }
     }
-}
-
-bool Inotify::isDirectory(const std::string &path) {
-    struct stat path_stat;
-    if (stat(path.c_str(), &path_stat) == 0) {
-        return S_ISREG(path_stat.st_mode);
-    }
-    return false;
 }
 
 bool Inotify::exists(const std::string &path) {
