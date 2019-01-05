@@ -1,6 +1,6 @@
 #pragma once
 
-#include "default.h"
+#include "value.h"
 #include "nlohmann/json.hpp"
 
 using nlohmann::json;
@@ -9,7 +9,7 @@ namespace ConfigCpp {
 
 class JsonHandler {
 public:
-    JsonHandler(const std::string &data, const DefaultValues &defaults);
+    JsonHandler(const std::string &data, const Values &defaults);
 
     ~JsonHandler();
 
@@ -25,7 +25,7 @@ public:
 private:
     bool GetNode(const std::string &key, json &node) const;
 
-    bool AddDefaultNode(const DefaultValue &def);
+    bool AddDefaultNode(const Value &def);
 
     json m_json;
 };

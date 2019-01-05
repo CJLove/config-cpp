@@ -7,7 +7,7 @@
 #include "config-cpp/config-cpp.h"
 
 #include "configCppData.h"
-#include "default.h"
+#include "value.h"
 #include "inotify.h"
 #include "notification.h"
 #include "util.h"
@@ -36,7 +36,7 @@ struct ConfigCpp::st_impl {
     std::string m_configFileName;
     std::unique_ptr<ConfigCppBase> m_data;
     std::unique_ptr<Inotify> m_inotify;
-    DefaultValues m_defaults;
+    Values m_defaults;
 
     void handleNotification(Notification notification);
     //void handleUnexpectedNotification(Notification notification);
@@ -207,35 +207,35 @@ std::string ConfigCpp::GetString(const std::string &key) const {
 
 void ConfigCpp::SetDefault(const std::string &key, const bool &boolVal) {
     if (m_pImpl) {
-        DefaultValue def(key, boolVal);
+        Value def(key, boolVal);
         m_pImpl->m_defaults.push_back(def);
     }
 }
 
 void ConfigCpp::SetDefault(const std::string &key, const int &intVal) {
     if (m_pImpl) {
-        DefaultValue def(key, intVal);
+        Value def(key, intVal);
         m_pImpl->m_defaults.push_back(def);
     }
 }
 
 void ConfigCpp::SetDefault(const std::string &key, const double &doubleVal) {
     if (m_pImpl) {
-        DefaultValue def(key, doubleVal);
+        Value def(key, doubleVal);
         m_pImpl->m_defaults.push_back(def);
     }
 }
 
 void ConfigCpp::SetDefault(const std::string &key, const char *stringVal) {
     if (m_pImpl) {
-        DefaultValue def(key,std::string(stringVal));
+        Value def(key,std::string(stringVal));
         m_pImpl->m_defaults.push_back(def);
     }
 }
 
 void ConfigCpp::SetDefault(const std::string &key, const std::string &stringVal) {
     if (m_pImpl) {
-        DefaultValue def(key, stringVal);
+        Value def(key, stringVal);
         m_pImpl->m_defaults.push_back(def);
     }
 }

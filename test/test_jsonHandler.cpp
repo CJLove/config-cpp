@@ -53,7 +53,7 @@ static const std::string jsonBadLiteral = R"({
 )";
 
 TEST(JsonHandlerTest, IsSet) {
-    ConfigCpp::DefaultValues defaults;
+    ConfigCpp::Values defaults;
     ConfigCpp::JsonHandler h(jsonLiteral, defaults);
 
     // Top-level keys
@@ -77,7 +77,7 @@ TEST(JsonHandlerTest, IsSet) {
 }
 
 TEST(JsonHandlerTest, Get) {
-    ConfigCpp::DefaultValues defaults;
+    ConfigCpp::Values defaults;
     ConfigCpp::JsonHandler h(jsonLiteral, defaults);
 
     EXPECT_EQ(h.GetBool("top-bool"), true);
@@ -106,17 +106,17 @@ TEST(JsonHandlerTest, Get) {
 }
 
 TEST(JsonHandlerTest, NewDefaults) {
-    ConfigCpp::DefaultValues defaults;
+    ConfigCpp::Values defaults;
     // Add 4 top-level defaults
-    defaults.push_back(ConfigCpp::DefaultValue("def-bool", false));
-    defaults.push_back(ConfigCpp::DefaultValue("def-int", 123));
-    defaults.push_back(ConfigCpp::DefaultValue("def-double", 2.345));
-    defaults.push_back(ConfigCpp::DefaultValue("def-string", "defaultStringVal"));
+    defaults.push_back(ConfigCpp::Value("def-bool", false));
+    defaults.push_back(ConfigCpp::Value("def-int", 123));
+    defaults.push_back(ConfigCpp::Value("def-double", 2.345));
+    defaults.push_back(ConfigCpp::Value("def-string", "defaultStringVal"));
     // Add default for value that will be read in from the config
-    defaults.push_back(ConfigCpp::DefaultValue("top-int", 555));
+    defaults.push_back(ConfigCpp::Value("top-int", 555));
     // // Add nested defaults to existing json objects
-    // defaults.push_back(ConfigCpp::DefaultValue("top-dict.key4",1234));
-    // defaults.push_back(ConfigCpp::DefaultValue("nested-dict.key2.key2-subkey3","another default"));
+    // defaults.push_back(ConfigCpp::Value("top-dict.key4",1234));
+    // defaults.push_back(ConfigCpp::Value("nested-dict.key2.key2-subkey3","another default"));
     ConfigCpp::JsonHandler h(jsonLiteral, defaults);
 
     // Top-level keys
@@ -163,7 +163,7 @@ TEST(JsonHandlerTest, NewDefaults) {
 }
 
 TEST(JsonHandlerTest, InvalidJson) {
-    ConfigCpp::DefaultValues defaults;
+    ConfigCpp::Values defaults;
 
     try { 
     ConfigCpp::JsonHandler h(jsonBadLiteral,defaults);

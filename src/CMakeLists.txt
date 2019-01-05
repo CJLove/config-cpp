@@ -16,7 +16,7 @@ set (config-cpp_SRC
     config-cpp.cpp
     jsonHandler.cpp
     util.cpp
-    default.cpp
+    value.cpp
     event.cpp
     notification.cpp
     filesystemEvent.cpp

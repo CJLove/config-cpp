@@ -38,7 +38,7 @@ top-double: 1.1234
 )";
 
 TEST(YamlHandlerTest, IsSet) {
-    ConfigCpp::DefaultValues defaults;
+    ConfigCpp::Values defaults;
     ConfigCpp::YamlHandler h(yamlLiteral, defaults);
 
     // Top-level keys
@@ -62,7 +62,7 @@ TEST(YamlHandlerTest, IsSet) {
 }
 
 TEST(YamlHandlerTest, Get) {
-    ConfigCpp::DefaultValues defaults;
+    ConfigCpp::Values defaults;
     ConfigCpp::YamlHandler h(yamlLiteral, defaults);
 
     EXPECT_EQ(h.GetBool("top-bool"), true);
@@ -93,17 +93,17 @@ TEST(YamlHandlerTest, Get) {
 }
 
 TEST(YamlHandlerTest, NewDefaults) {
-    ConfigCpp::DefaultValues defaults;
+    ConfigCpp::Values defaults;
     // Add 4 top-level defaults
-    defaults.push_back(ConfigCpp::DefaultValue("def-bool", false));
-    defaults.push_back(ConfigCpp::DefaultValue("def-int", 123));
-    defaults.push_back(ConfigCpp::DefaultValue("def-double", 2.345));
-    defaults.push_back(ConfigCpp::DefaultValue("def-string", "defaultStringVal"));
+    defaults.push_back(ConfigCpp::Value("def-bool", false));
+    defaults.push_back(ConfigCpp::Value("def-int", 123));
+    defaults.push_back(ConfigCpp::Value("def-double", 2.345));
+    defaults.push_back(ConfigCpp::Value("def-string", "defaultStringVal"));
     // Add default for value that will be read in from the config
-    defaults.push_back(ConfigCpp::DefaultValue("top-int", 555));
+    defaults.push_back(ConfigCpp::Value("top-int", 555));
     // // Add nested defaults to existing json objects
-    // defaults.push_back(ConfigCpp::DefaultValue("top-dict.key4",1234));
-    // defaults.push_back(ConfigCpp::DefaultValue("nested-dict.key2.key2-subkey3","another default"));
+    // defaults.push_back(ConfigCpp::Value("top-dict.key4",1234));
+    // defaults.push_back(ConfigCpp::Value("nested-dict.key2.key2-subkey3","another default"));
     ConfigCpp::YamlHandler h(yamlLiteral, defaults);
 
     // Top-level keys
@@ -150,7 +150,7 @@ TEST(YamlHandlerTest, NewDefaults) {
 }
 
 TEST(YamlHandlerTest, InvalidYaml) {
-    ConfigCpp::DefaultValues defaults;
+    ConfigCpp::Values defaults;
     try {
         ConfigCpp::YamlHandler h(yamlBadLiteral, defaults);
         FAIL() << "Expected std::runtime_error";

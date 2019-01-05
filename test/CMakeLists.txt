@@ -13,7 +13,7 @@ include_directories(
 
 set (ConfigCppTests_SRC 
     test_util.cpp 
-    test_default.cpp
+    test_value.cpp
     test_event.cpp
     test_notification.cpp
     test_inotify.cpp

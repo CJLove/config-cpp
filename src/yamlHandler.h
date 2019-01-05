@@ -1,13 +1,13 @@
 #pragma once
 
-#include "default.h"
+#include "value.h"
 #include "yaml-cpp/yaml.h"
 
 namespace ConfigCpp {
 
 class YamlHandler {
 public:
-    YamlHandler(const std::string &data, const DefaultValues &defaults);
+    YamlHandler(const std::string &data, const Values &defaults);
 
     ~YamlHandler();
 
@@ -24,7 +24,7 @@ private:
     // Recursive function to find a node in a "path"
     bool GetNode(std::vector<std::string> &keys, const YAML::Node &cur, YAML::Node &node) const;
 
-    bool AddDefaultNode(const DefaultValue &def);
+    bool AddDefaultNode(const Value &def);
 
     YAML::Node m_yaml;
 };

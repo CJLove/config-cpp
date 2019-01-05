@@ -5,7 +5,7 @@
 
 namespace ConfigCpp {
 
-JsonHandler::JsonHandler(const std::string &data, const DefaultValues &defaults) {
+JsonHandler::JsonHandler(const std::string &data, const Values &defaults) {
     try {
         m_json = json::parse(data);
     }
@@ -89,22 +89,22 @@ bool JsonHandler::GetNode(const std::string &key, json &node) const {
     return true;
 }
 
-bool JsonHandler::AddDefaultNode(const DefaultValue &def) {
+bool JsonHandler::AddDefaultNode(const Value &def) {
     auto keys = split(def.m_key, '.');
     if (keys.size() == 1) {
         auto key = keys[0];
 
         switch (def.m_type) {
-            case DefaultValue::BOOL:
+            case Value::BOOL:
                 m_json[key] = def.m_bool;
                 break;
-            case DefaultValue::INT:
+            case Value::INT:
                 m_json[key] = def.m_int;
                 break;
-            case DefaultValue::DOUBLE:
+            case Value::DOUBLE:
                 m_json[key] = def.m_double;
                 break;
-            case DefaultValue::STRING:
+            case Value::STRING:
                 m_json[key] = def.m_string;
                 break;
         }
@@ -113,16 +113,16 @@ bool JsonHandler::AddDefaultNode(const DefaultValue &def) {
 
         // if (GetNode(prefix(def.m_key),node)) {
         //     switch (def.m_type) {
-        //         case DefaultValue::BOOL:
+        //         case Value::BOOL:
         //             node[keys[keys.size()-1]] = def.m_bool;
         //             break;
-        //         case DefaultValue::INT:
+        //         case Value::INT:
         //             node[keys[keys.size()-1]] = def.m_int;
         //             break;
-        //         case DefaultValue::DOUBLE:
+        //         case Value::DOUBLE:
         //             node[keys[keys.size()-1]] = def.m_double;
         //             break;
-        //         case DefaultValue::STRING:
+        //         case Value::STRING:
         //             node[keys[keys.size()-1]] = def.m_string;
         //             break;
         //     }

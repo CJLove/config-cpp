@@ -7,7 +7,7 @@ using namespace YAML;
 
 namespace ConfigCpp {
 
-YamlHandler::YamlHandler(const std::string &data, const DefaultValues &defaults) : m_yaml(YAML::Load(data)) 
+YamlHandler::YamlHandler(const std::string &data, const Values &defaults) : m_yaml(YAML::Load(data)) 
 {
     try {
         m_yaml = YAML::Load(data);
@@ -97,20 +97,20 @@ bool YamlHandler::GetNode(std::vector<std::string> &keys, const YAML::Node &cur,
     return false;
 }
 
-bool YamlHandler::AddDefaultNode(const DefaultValue &def) {
+bool YamlHandler::AddDefaultNode(const Value &def) {
     auto keys = split(def.m_key,'.');
     if (keys.size() == 1) {
         switch (def.m_type) {
-            case DefaultValue::BOOL:
+            case Value::BOOL:
                 m_yaml[keys[keys.size()-1]] = def.m_bool;
                 break;
-            case DefaultValue::INT:
+            case Value::INT:
                 m_yaml[keys[keys.size()-1]] = def.m_int;
                 break;
-            case DefaultValue::DOUBLE:
+            case Value::DOUBLE:
                 m_yaml[keys[keys.size()-1]] = def.m_double;
                 break;
-            case DefaultValue::STRING:
+            case Value::STRING:
                 m_yaml[keys[keys.size()-1]] = def.m_string;
                 break;
         }
