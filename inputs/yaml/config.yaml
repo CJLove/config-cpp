@@ -2,6 +2,7 @@
 top-string: bob
 top-int: 10
 top-bool: true
+top-double: 1.234
 top-list:
   - item1
   - item2

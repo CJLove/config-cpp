@@ -48,3 +48,13 @@ TEST(UtilTest, Symlink) {
     auto result2 = ConfigCpp::symlinkName(key2);
     EXPECT_EQ(result2, "config/..data");
 }
+
+TEST(UtilTest, NormalizePath) {
+    std::string path1 = "/path/to/config";
+    auto result1 = ConfigCpp::normalizePath(path1);
+    EXPECT_EQ(result1,"/path/to/config/");
+
+    std::string path2 = "/path/to/config/";
+    auto result2 = ConfigCpp::normalizePath(path2);
+    EXPECT_EQ(result2,"/path/to/config/");
+}

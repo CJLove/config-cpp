@@ -31,4 +31,14 @@ std::string symlinkName(const std::string &str) {
     return symlink;
 }
 
+std::string normalizePath(const std::string &path) {
+    auto ret = path;
+    if (!ret.empty()) {
+        if (ret[ret.size()-1] != '/') {
+            ret += '/';
+        }
+    }
+    return ret;
+}
+
 }  // namespace ConfigCpp

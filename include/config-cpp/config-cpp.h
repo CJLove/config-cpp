@@ -232,6 +232,7 @@ public:
      * @param stringVal
      */
     void SetDefault(const std::string &key, const std::string &stringVal);
+    void SetDefault(const std::string &key, const char *stringVal);
 
 private:
     struct st_impl;

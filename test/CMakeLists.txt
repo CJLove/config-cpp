@@ -17,6 +17,7 @@ set (ConfigCppTests_SRC
     test_event.cpp
     test_notification.cpp
     test_inotify.cpp
+    test_configcpp.cpp
 )
 
 if (YAML_SUPPORT)

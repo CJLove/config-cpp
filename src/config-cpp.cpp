@@ -39,7 +39,7 @@ struct ConfigCpp::st_impl {
     DefaultValues m_defaults;
 
     void handleNotification(Notification notification);
-    void handleUnexpectedNotification(Notification notification);
+    //void handleUnexpectedNotification(Notification notification);
 
     st_impl(ConfigCpp &config, int argc, char **argv)
         : m_config(config), m_argc(argc), m_argv(argv), m_type(ConfigType::UNKNOWN), m_inotify(std::make_unique<Inotify>()) {}
@@ -51,7 +51,7 @@ struct ConfigCpp::st_impl {
           m_name(name),
           m_type(ConfigType::UNKNOWN),
           m_inotify(std::make_unique<Inotify>()) {
-        m_path.push_back(path);
+        m_path.push_back(normalizePath(path));
     }
 
     ~st_impl() {
@@ -69,15 +69,17 @@ void ConfigCpp::st_impl::handleNotification(Notification notification) {
         m_callback(m_config);
 
     // (re)-register watch for the symlink
-    m_inotify->unwatchFile(symlinkName(m_configFileName));
-    m_inotify->watchFile(symlinkName(m_configFileName));
-
+    if (notification.m_event == Event::remove) {
+        m_inotify->unwatchFile(symlinkName(m_configFileName));
+        m_inotify->watchFile(symlinkName(m_configFileName));
+    }
 }
 
-void ConfigCpp::st_impl::handleUnexpectedNotification(Notification notification) {
-    std::cout << "Unregistered Event " << notification.m_event << " on " << notification.m_path << " at "
-              << notification.m_time.time_since_epoch().count() << " was triggered\n";
-}
+// For Troubleshooting
+// void ConfigCpp::st_impl::handleUnexpectedNotification(Notification notification) {
+//     std::cout << "Unregistered Event " << notification.m_event << " on " << notification.m_path << " at "
+//               << notification.m_time.time_since_epoch().count() << " was triggered\n";
+// }
 
 ConfigCpp::ConfigCpp(int argc, char **argv) : m_pImpl(std::make_unique<ConfigCpp::st_impl>(*this, argc, argv)) {}
 
@@ -88,7 +90,7 @@ ConfigCpp::~ConfigCpp() {}
 
 void ConfigCpp::SetConfigName(const std::string &name) { m_pImpl->m_name = name; }
 
-void ConfigCpp::AddConfigPath(const std::string &path) { m_pImpl->m_path.push_back(path); }
+void ConfigCpp::AddConfigPath(const std::string &path) { m_pImpl->m_path.push_back(normalizePath(path)); }
 
 void ConfigCpp::WatchConfig() {
     std::cout << "Adding watch for " << m_pImpl->m_configFileName << "\n";
@@ -97,7 +99,7 @@ void ConfigCpp::WatchConfig() {
     // removed and replaced when the ConfigMap is updated.
     m_pImpl->m_inotify->watchFile(symlinkName(m_pImpl->m_configFileName));
     auto events = {
-        Event::modify,
+        Event::close_write,
         Event::remove,
     };
     auto handler = [this](Notification note) { this->m_pImpl->handleNotification(note); };
@@ -220,6 +222,13 @@ void ConfigCpp::SetDefault(const std::string &key, const int &intVal) {
 void ConfigCpp::SetDefault(const std::string &key, const double &doubleVal) {
     if (m_pImpl) {
         DefaultValue def(key, doubleVal);
+        m_pImpl->m_defaults.push_back(def);
+    }
+}
+
+void ConfigCpp::SetDefault(const std::string &key, const char *stringVal) {
+    if (m_pImpl) {
+        DefaultValue def(key,std::string(stringVal));
         m_pImpl->m_defaults.push_back(def);
     }
 }
