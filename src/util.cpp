@@ -41,4 +41,13 @@ std::string normalizePath(const std::string &path) {
     return ret;
 }
 
+std::string longOption(const std::string &option) {
+    auto longOption = option;
+    auto pos = option.find(',');
+    if (pos != std::string::npos) {
+        longOption = option.substr(pos+1);
+    }
+    return longOption;
+}
+
 }  // namespace ConfigCpp

@@ -1,16 +1,18 @@
 #include <chrono>
+#include <cxxopts.hpp>
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <unistd.h>
 #include <vector>
 
 #include "config-cpp/config-cpp.h"
 
 #include "configCppData.h"
-#include "value.h"
 #include "inotify.h"
 #include "notification.h"
 #include "util.h"
+#include "value.h"
 
 #if defined(JSON_SUPPORT)
 #include "jsonHandler.h"
@@ -37,12 +39,25 @@ struct ConfigCpp::st_impl {
     std::unique_ptr<ConfigCppBase> m_data;
     std::unique_ptr<Inotify> m_inotify;
     Values m_defaults;
+    cxxopts::Options m_options;
+    std::map<std::string,Value::ValueType> m_optionTypes;
+    Values m_cmdLineArgs;
+    bool m_cmdLineParsed;
 
     void handleNotification(Notification notification);
-    //void handleUnexpectedNotification(Notification notification);
+    // void handleUnexpectedNotification(Notification notification);
 
     st_impl(ConfigCpp &config, int argc, char **argv)
-        : m_config(config), m_argc(argc), m_argv(argv), m_type(ConfigType::UNKNOWN), m_inotify(std::make_unique<Inotify>()) {}
+        : m_config(config),
+          m_argc(argc),
+          m_argv(argv),
+          m_type(ConfigType::UNKNOWN),
+          m_inotify(std::make_unique<Inotify>()),
+          m_options(argv ? argv[0] : ""),
+          m_cmdLineParsed(false) {
+              m_options.add_options()
+              ("help","Print help");
+          }
 
     st_impl(ConfigCpp &config, int argc, char **argv, const std::string &name, const std::string &path)
         : m_config(config),
@@ -50,8 +65,12 @@ struct ConfigCpp::st_impl {
           m_argv(argv),
           m_name(name),
           m_type(ConfigType::UNKNOWN),
-          m_inotify(std::make_unique<Inotify>()) {
+          m_inotify(std::make_unique<Inotify>()),
+          m_options(argv ? argv[0] : ""),
+          m_cmdLineParsed(false) {
         m_path.push_back(normalizePath(path));
+        m_options.add_options()
+        ("help","Print help");
     }
 
     ~st_impl() {
@@ -62,8 +81,8 @@ struct ConfigCpp::st_impl {
 };
 
 void ConfigCpp::st_impl::handleNotification(Notification notification) {
-    std::cout << "Registered Event " << notification.m_event << " on " << notification.m_path << " at "
-              << notification.m_time.time_since_epoch().count() << " was triggered\n";
+    // std::cout << "Registered Event " << notification.m_event << " on " << notification.m_path << " at "
+    //           << notification.m_time.time_since_epoch().count() << " was triggered\n";
 
     if (m_callback)
         m_callback(m_config);
@@ -118,6 +137,42 @@ void ConfigCpp::WatchConfig() {
 void ConfigCpp::OnConfigChange(Callback callback) { m_pImpl->m_callback = callback; }
 
 bool ConfigCpp::ReadInConfig() {
+    if (!m_pImpl->m_cmdLineParsed && m_pImpl->m_optionTypes.size() > 0) {
+        try {
+            auto result = m_pImpl->m_options.parse(m_pImpl->m_argc, m_pImpl->m_argv);
+            if (result.count("help")) {
+                std::cout << m_pImpl->m_options.help({""}) << std::endl;
+                exit(1);
+            }
+            auto args = result.arguments();
+            for (const auto &arg: args) {
+                switch (m_pImpl->m_optionTypes[arg.key()]) {
+                    case Value::ValueType::BOOL:
+                    m_pImpl->m_cmdLineArgs.push_back(Value(arg.key(),arg.as<bool>()));
+                    break;
+                    case Value::ValueType::INT:
+                    m_pImpl->m_cmdLineArgs.push_back(Value(arg.key(),arg.as<int>()));
+                    break;
+                    case Value::ValueType::STRING:
+                    m_pImpl->m_cmdLineArgs.push_back(Value(arg.key(),arg.as<std::string>()));
+                    break;
+                    case Value::ValueType::DOUBLE:
+                    m_pImpl->m_cmdLineArgs.push_back(Value(arg.key(),arg.as<double>()));
+                    break;
+                }
+            }
+            m_pImpl->m_cmdLineParsed = true;
+        } catch (cxxopts::OptionParseException &e) {
+            // Exception from cxxopts parsing the arguments.  Output the error and usage.
+            std::cout << "Error: " << e.what() << "\n";
+            std::cout << m_pImpl->m_options.help({""}) << std::endl;
+            std::exit(1);
+        } catch (std::exception &e) {
+            // Anything else is in the subsequent processing of arguments
+            std::cout << "Caught " << e.what() << "\n";
+            // TBD: return false?
+        }
+    }
     static std::vector<std::string> yamlExtensions = {".yml", ".yaml"};
     static std::vector<std::string> jsonExtensions = {".json"};
 
@@ -126,7 +181,6 @@ bool ConfigCpp::ReadInConfig() {
 #if defined(YAML_SUPPORT)
         if (m_pImpl->m_type == ConfigType::UNKNOWN || m_pImpl->m_type == ConfigType::YAML) {
             for (const auto ext : yamlExtensions) {
-                std::cout << "Trying " << name + ext << "\n";
                 std::ifstream file(name + ext);
                 if (file.good()) {
                     try {
@@ -134,7 +188,7 @@ bool ConfigCpp::ReadInConfig() {
                         stream << file.rdbuf();
                         m_pImpl->m_configFileName = name + ext;
                         m_pImpl->m_type = ConfigType::YAML;
-                        m_pImpl->m_data.reset(new ConfigCppData<YamlHandler>(stream.str(), m_pImpl->m_defaults));
+                        m_pImpl->m_data.reset(new ConfigCppData<YamlHandler>(stream.str(), m_pImpl->m_defaults, m_pImpl->m_cmdLineArgs));
                         return true;
                     } catch (...) {
                         std::cout << "Failed to read " << name + ext << "\n";
@@ -146,7 +200,6 @@ bool ConfigCpp::ReadInConfig() {
 #if defined(JSON_SUPPORT)
         if (m_pImpl->m_type == ConfigType::UNKNOWN || m_pImpl->m_type == ConfigType::JSON) {
             for (const auto ext : jsonExtensions) {
-                std::cout << "Trying " << name + ext << "\n";
                 std::ifstream file(name + ext);
                 if (file.good()) {
                     try {
@@ -154,7 +207,7 @@ bool ConfigCpp::ReadInConfig() {
                         stream << file.rdbuf();
                         m_pImpl->m_configFileName = name + ext;
                         m_pImpl->m_type = ConfigType::JSON;
-                        m_pImpl->m_data.reset(new ConfigCppData<JsonHandler>(stream.str(), m_pImpl->m_defaults));
+                        m_pImpl->m_data.reset(new ConfigCppData<JsonHandler>(stream.str(), m_pImpl->m_defaults, m_pImpl->m_cmdLineArgs));
                         return true;
                     } catch (...) {
                         std::cout << "Failed to read " << name + ext << "\n";
@@ -228,7 +281,7 @@ void ConfigCpp::SetDefault(const std::string &key, const double &doubleVal) {
 
 void ConfigCpp::SetDefault(const std::string &key, const char *stringVal) {
     if (m_pImpl) {
-        Value def(key,std::string(stringVal));
+        Value def(key, std::string(stringVal));
         m_pImpl->m_defaults.push_back(def);
     }
 }
@@ -240,4 +293,43 @@ void ConfigCpp::SetDefault(const std::string &key, const std::string &stringVal)
     }
 }
 
+void ConfigCpp::AddBoolOption(const std::string &name, const std::string &helpString) {
+    if (m_pImpl) {
+        try {
+            m_pImpl->m_options.add_options()(name, helpString);
+            m_pImpl->m_optionTypes[longOption(name)] = Value::ValueType::BOOL;
+        } catch (std::exception &e) {
+        }
+    }
+}
+
+void ConfigCpp::AddIntOption(const std::string &name, const std::string &helpString) {
+    if (m_pImpl) {
+        try {
+            m_pImpl->m_options.add_options()(name, helpString, cxxopts::value<int>());
+            m_pImpl->m_optionTypes[longOption(name)] = Value::ValueType::INT;
+        } catch (std::exception &e) {
+        }
+    }
+}
+
+void ConfigCpp::AddStringOption(const std::string &name, const std::string &helpString) {
+    if (m_pImpl) {
+        try {
+            m_pImpl->m_options.add_options()(name, helpString, cxxopts::value<std::string>());
+            m_pImpl->m_optionTypes[longOption(name)] = Value::ValueType::STRING;
+        } catch (std::exception &e) {
+        }
+    }
+}
+
+void ConfigCpp::AddDoubleOption(const std::string &name, const std::string &helpString) {
+    if (m_pImpl) {
+        try {
+            m_pImpl->m_options.add_options()(name, helpString, cxxopts::value<double>());
+            m_pImpl->m_optionTypes[longOption(name)] = Value::ValueType::DOUBLE;
+        } catch (std::exception &e) {
+        }
+    }
+}
 }  // namespace ConfigCpp

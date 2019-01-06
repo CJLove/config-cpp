@@ -53,6 +53,8 @@ if (JSON_SUPPORT)
     target_link_libraries( config-cpp nlohmann_json::nlohmann_json )
 endif(JSON_SUPPORT)
 
+    target_link_libraries( config-cpp cxxopts::cxxopts )
+
 if (BUILD_COVERAGE)
     target_link_libraries( config-cpp gcov )
 endif (BUILD_COVERAGE)

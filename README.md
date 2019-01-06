@@ -14,7 +14,7 @@ C++ Configuration library patterned after [`viper`](https://github.com/spf13/vip
 
 ConfigCpp uses the following precedence order.  Each item takes precedence over the item(s) below it:
 
-- TODO: command-line flags
+- command-line flags
 - TODO: environment variables
 - configuration file
 - default
@@ -23,6 +23,7 @@ ConfigCpp uses the following precedence order.  Each item takes precedence over 
 - C++14-capable compiler
 - GoogleTest (unit testing)
 - CMake
+- cxxopts (https://github.com/jarro2783/cxxopts)
 
 Also one or both of the following:
 - Json for Modern C++ (https://github.com/nlohmann/json)
@@ -72,7 +73,17 @@ config.SetDefault("logLevel", "trace");
 TBD
 
 ### Command-line Flags
-TBD
+Command line flags can be added as follows, following the `cxxopts` convention of specifying the long name optionally preceded by the short name separated by a comma.
+
+```c++
+config.AddBoolOption("b,top-bool","Bool option");
+config.AddIntOption("t,top-int","Integer option");
+config.AddStringOption("s,top-string","String option");
+config.AddDoubleOption("d,top-double","Double option");
+config.AddStringOption("long-only","String option w/no short name");
+```
+By default a `--help` option is added, which will result in displaying the help output from `cxxopts` and then exiting with return code 1.  Errors encountered while parsing command-line arguments will result displaying the error message and help output from `cxxopts` and then exiting with return code 1.
+
 
 ### Retrieving Configuration Values
 

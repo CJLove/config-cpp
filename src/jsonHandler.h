@@ -1,7 +1,7 @@
 #pragma once
 
-#include "value.h"
 #include "nlohmann/json.hpp"
+#include "value.h"
 
 using nlohmann::json;
 
@@ -9,7 +9,7 @@ namespace ConfigCpp {
 
 class JsonHandler {
 public:
-    JsonHandler(const std::string &data, const Values &defaults);
+    JsonHandler(const std::string &data, const Values &defaults, const Values &cmdLineArgs);
 
     ~JsonHandler();
 

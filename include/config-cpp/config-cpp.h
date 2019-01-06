@@ -241,7 +241,37 @@ public:
      */
     void SetDefault(const std::string &key, const char *stringVal);
 
-    
+    /**
+     * @brief Add a boolean command-line argument where presense implies a TRUE value
+     * 
+     * @param name - command-line argument name (optional short name,long name) 
+     * @param helpString - optional help text
+     */
+    void AddBoolOption(const std::string &name, const std::string &helpString = "");
+
+    /**
+     * @brief Add a command-line argument with a reguired integer value
+     * 
+     * @param name - command-line argument name
+     * @param helpString - optional help text
+     */
+    void AddIntOption(const std::string &name, const std::string &helpString = "");
+
+    /**
+     * @brief Add a command-line argument with a required string value
+     * 
+     * @param name - command-line argument name
+     * @param helpString - optional help text
+     */
+    void AddStringOption(const std::string &name, const std::string &helpString = "");
+
+    /**
+     * @brief Add a command-line argument with a required double value
+     * 
+     * @param name - command-line argument name
+     * @param helpString - optional help text
+     */
+    void AddDoubleOption(const std::string &name, const std::string &helpString = "");
 
 private:
     struct st_impl;

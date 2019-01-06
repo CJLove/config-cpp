@@ -7,7 +7,7 @@ namespace ConfigCpp {
 
 class YamlHandler {
 public:
-    YamlHandler(const std::string &data, const Values &defaults);
+    YamlHandler(const std::string &data, const Values &defaults, const Values &cmdLineArgs);
 
     ~YamlHandler();
 

@@ -2,7 +2,7 @@
 
 #include "value.h"
 
-TEST(DefaultTest, DefaultType) {
+TEST(DefaultTest, ValueType) {
     ConfigCpp::Value def1("aaa", true);
     EXPECT_EQ(def1.m_key, "aaa");
     EXPECT_EQ(def1.m_bool, true);

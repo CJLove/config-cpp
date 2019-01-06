@@ -15,6 +15,11 @@ int main(int argc, char**argv)
     config.AddConfigPath("../inputs/json/");
     config.AddConfigPath("../../inputs/json/");
 
+    config.AddBoolOption("b,top-bool","Bool option");
+    config.AddIntOption("t,top-int","Integer option");
+    config.AddStringOption("s,top-string","String option");
+    config.AddDoubleOption("d,top-double","Double option");
+
     if (config.ReadInConfig()) {
         std::cout << "Read in config successfully:\n" << config.GetConfigData() << "\n";
 

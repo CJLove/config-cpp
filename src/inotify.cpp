@@ -181,7 +181,6 @@ void Inotify::start()
 
 void Inotify::run()
 {
-    std::cout << "Inotify::run()\n";
     while (true) {
         if (m_stopped) break;
     

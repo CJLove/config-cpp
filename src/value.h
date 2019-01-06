@@ -6,9 +6,9 @@
 namespace ConfigCpp {
 
 struct Value {
-    enum DefaultType { BOOL, INT, DOUBLE, STRING };
+    enum ValueType { BOOL, INT, DOUBLE, STRING };
     std::string m_key;
-    DefaultType m_type;
+    ValueType m_type;
     bool m_bool;
     int m_int;
     double m_double;

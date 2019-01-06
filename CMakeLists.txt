@@ -54,6 +54,8 @@ if (JSON_SUPPORT)
     add_definitions(-DJSON_SUPPORT)
 endif(JSON_SUPPORT)
 
+find_package(cxxopts REQUIRED)
+
 # Threads
 find_package(Threads)
 

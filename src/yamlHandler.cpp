@@ -7,20 +7,26 @@ using namespace YAML;
 
 namespace ConfigCpp {
 
-YamlHandler::YamlHandler(const std::string &data, const Values &defaults) : m_yaml(YAML::Load(data)) 
-{
+YamlHandler::YamlHandler(const std::string &data, const Values &defaults, const Values &cmdLineArgs)
+    : m_yaml(YAML::Load(data)) {
     try {
         m_yaml = YAML::Load(data);
-    }
-    catch (...) {
+    } catch (...) {
         throw std::runtime_error("Invalid YAML received");
     }
-    for (const auto &def: defaults) {
+    // For defaults, only integrate default values where the specific key isn't
+    // part of the config data already
+    for (const auto &def : defaults) {
         YAML::Node node;
         auto keys = split(def.m_key, '.');
-        if (!GetNode(keys,m_yaml,node)) {
+        if (!GetNode(keys, m_yaml, node)) {
             AddDefaultNode(def);
         }
+    }
+    // For command-line arguments these values supercede any values read from
+    // config data
+    for (const auto &arg : cmdLineArgs) {
+        AddDefaultNode(arg);
     }
 }
 
@@ -98,20 +104,20 @@ bool YamlHandler::GetNode(std::vector<std::string> &keys, const YAML::Node &cur,
 }
 
 bool YamlHandler::AddDefaultNode(const Value &def) {
-    auto keys = split(def.m_key,'.');
+    auto keys = split(def.m_key, '.');
     if (keys.size() == 1) {
         switch (def.m_type) {
             case Value::BOOL:
-                m_yaml[keys[keys.size()-1]] = def.m_bool;
+                m_yaml[keys[keys.size() - 1]] = def.m_bool;
                 break;
             case Value::INT:
-                m_yaml[keys[keys.size()-1]] = def.m_int;
+                m_yaml[keys[keys.size() - 1]] = def.m_int;
                 break;
             case Value::DOUBLE:
-                m_yaml[keys[keys.size()-1]] = def.m_double;
+                m_yaml[keys[keys.size() - 1]] = def.m_double;
                 break;
             case Value::STRING:
-                m_yaml[keys[keys.size()-1]] = def.m_string;
+                m_yaml[keys[keys.size() - 1]] = def.m_string;
                 break;
         }
         return true;

@@ -22,7 +22,8 @@ public:
 template <typename T>
 class ConfigCppData : public ConfigCppBase {
 public:
-    ConfigCppData(const std::string &data, const Values &defaults) : ConfigCppBase(), m_handler(data, defaults) {}
+    ConfigCppData(const std::string &data, const Values &defaults, const Values &cmdLineArgs)
+        : ConfigCppBase(), m_handler(data, defaults, cmdLineArgs) {}
 
     virtual ~ConfigCppData() {}
 

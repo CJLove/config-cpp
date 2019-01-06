@@ -5,19 +5,24 @@
 
 namespace ConfigCpp {
 
-JsonHandler::JsonHandler(const std::string &data, const Values &defaults) {
+JsonHandler::JsonHandler(const std::string &data, const Values &defaults, const Values &cmdLineArgs) {
     try {
         m_json = json::parse(data);
-    }
-    catch (...) {
+    } catch (...) {
         throw std::runtime_error("Invalid json received");
     }
-
+    // For defaults, only integrate default values where the specific key isn't
+    // part of the config data already
     for (const auto &def : defaults) {
         json node;
-        if (!GetNode(def.m_key,node)) {
+        if (!GetNode(def.m_key, node)) {
             AddDefaultNode(def);
         }
+    }
+    // For command-line arguments these values supercede any values read from
+    // config data
+    for (const auto &arg : cmdLineArgs) {
+        AddDefaultNode(arg);
     }
 }
 
@@ -129,11 +134,9 @@ bool JsonHandler::AddDefaultNode(const Value &def) {
         //     return true;
         // }
     }
-    return false;    
+    return false;
 }
 
-std::string JsonHandler::GetConfig() const {
-    return m_json.dump(2);
-}
+std::string JsonHandler::GetConfig() const { return m_json.dump(2); }
 
 }  // namespace ConfigCpp

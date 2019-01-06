@@ -54,7 +54,8 @@ static const std::string jsonBadLiteral = R"({
 
 TEST(JsonHandlerTest, IsSet) {
     ConfigCpp::Values defaults;
-    ConfigCpp::JsonHandler h(jsonLiteral, defaults);
+    ConfigCpp::Values args;
+    ConfigCpp::JsonHandler h(jsonLiteral, defaults, args);
 
     // Top-level keys
     EXPECT_EQ(h.IsSet("top-string"), true);
@@ -78,7 +79,8 @@ TEST(JsonHandlerTest, IsSet) {
 
 TEST(JsonHandlerTest, Get) {
     ConfigCpp::Values defaults;
-    ConfigCpp::JsonHandler h(jsonLiteral, defaults);
+    ConfigCpp::Values args;
+    ConfigCpp::JsonHandler h(jsonLiteral, defaults, args);
 
     EXPECT_EQ(h.GetBool("top-bool"), true);
     EXPECT_EQ(h.GetBool("no-key"), false);
@@ -105,6 +107,44 @@ TEST(JsonHandlerTest, Get) {
     EXPECT_EQ(h.GetString("nested-dict.key1.key1-subkey1"), "value1-1");
 }
 
+TEST(JsonHandlerTest, CmdLineArgs) {
+    ConfigCpp::Values defaults;
+    ConfigCpp::Values args;
+    // Add 4 top-level arguments
+    args.push_back(ConfigCpp::Value("def-bool", false));
+    args.push_back(ConfigCpp::Value("def-int", 123));
+    args.push_back(ConfigCpp::Value("def-double", 2.345));
+    args.push_back(ConfigCpp::Value("def-string", "defaultStringVal"));
+    // Add arguments superceding those read in from the config
+    args.push_back(ConfigCpp::Value("top-int", 555));
+    args.push_back(ConfigCpp::Value("top-string", "cmdLineString"));
+    args.push_back(ConfigCpp::Value("top-double", 555.555));
+
+    ConfigCpp::JsonHandler h(jsonLiteral, defaults, args);
+
+    // Top-level keys
+    EXPECT_EQ(h.IsSet("top-string"), true);
+    EXPECT_EQ(h.IsSet("no-key"), false);
+    EXPECT_EQ(h.IsSet("top-dict"), true);
+    EXPECT_EQ(h.IsSet("top-list"), true);
+    EXPECT_EQ(h.IsSet("top-int"), true);
+
+    // Values added as defaults
+    EXPECT_EQ(h.IsSet("def-bool"), true);
+    EXPECT_EQ(h.GetBool("def-bool"), false);
+    EXPECT_EQ(h.IsSet("def-int"), true);
+    EXPECT_EQ(h.GetInt("def-int"), 123);
+    EXPECT_EQ(h.IsSet("def-double"), true);
+    EXPECT_EQ(h.GetDouble("def-double"), 2.345);
+    EXPECT_EQ(h.IsSet("def-string"), true);
+    EXPECT_EQ(h.GetString("def-string"), "defaultStringVal");
+    EXPECT_EQ(h.IsSet("def-nokey"), false);
+
+    EXPECT_EQ(h.GetInt("top-int"), 555);
+    EXPECT_EQ(h.GetString("top-string"), "cmdLineString");
+    EXPECT_EQ(h.GetDouble("top-double"), 555.555);
+}
+
 TEST(JsonHandlerTest, NewDefaults) {
     ConfigCpp::Values defaults;
     // Add 4 top-level defaults
@@ -117,7 +157,9 @@ TEST(JsonHandlerTest, NewDefaults) {
     // // Add nested defaults to existing json objects
     // defaults.push_back(ConfigCpp::Value("top-dict.key4",1234));
     // defaults.push_back(ConfigCpp::Value("nested-dict.key2.key2-subkey3","another default"));
-    ConfigCpp::JsonHandler h(jsonLiteral, defaults);
+
+    ConfigCpp::Values args;
+    ConfigCpp::JsonHandler h(jsonLiteral, defaults, args);
 
     // Top-level keys
     EXPECT_EQ(h.IsSet("top-string"), true);
@@ -164,17 +206,16 @@ TEST(JsonHandlerTest, NewDefaults) {
 
 TEST(JsonHandlerTest, InvalidJson) {
     ConfigCpp::Values defaults;
+    ConfigCpp::Values args;
 
-    try { 
-    ConfigCpp::JsonHandler h(jsonBadLiteral,defaults);
+    try {
+        ConfigCpp::JsonHandler h(jsonBadLiteral, defaults, args);
 
         FAIL() << "expected std::runtime_error";
 
-    }
-    catch (std::runtime_error &e) {
+    } catch (std::runtime_error &e) {
 
-    }
-    catch (...) {
+    } catch (...) {
         FAIL() << "expected std::runtime_error";
     }
 }

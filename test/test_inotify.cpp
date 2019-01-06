@@ -13,12 +13,10 @@ void createFile(const std::string &file) {
     f.close();
 }
 
-void createSymlink(const std::string &file) {
-    symlink(file.c_str(),"/tmp/testfile");
-}
+void createSymlink(const std::string &file) { symlink(file.c_str(), "/tmp/testfile"); }
 
 void modifyFile() {
-    std::ofstream f("/tmp/testfile",std::ios_base::app);
+    std::ofstream f("/tmp/testfile", std::ios_base::app);
     f << "MoreBlah";
     f.close();
 }
@@ -29,9 +27,7 @@ void accessFile() {
     stream << f.rdbuf();
 }
 
-void removeFile(const std::string &file) {
-    unlink(file.c_str());
-}
+void removeFile(const std::string &file) { unlink(file.c_str()); }
 
 static std::atomic<int> createCount;
 static std::atomic<int> modifyCount;
@@ -64,8 +60,7 @@ static void onRemove(Notification note) {
     removeCount++;
 }
 
-TEST(InotifyTest, File)
-{
+TEST(InotifyTest, File) {
     Inotify note;
     createCount = 0;
     modifyCount = 0;
@@ -77,10 +72,10 @@ TEST(InotifyTest, File)
     createFile("/tmp/testfile");
 
     note.watchFile("/tmp/testfile");
-    note.onEvent(Event::create,onCreate);
-    note.onEvent(Event::modify,onModify);
-    note.onEvent(Event::access,onAccess);
-    note.onEvent(Event::remove_self|Event::remove,onRemove);
+    note.onEvent(Event::create, onCreate);
+    note.onEvent(Event::modify, onModify);
+    note.onEvent(Event::access, onAccess);
+    note.onEvent(Event::remove_self | Event::remove, onRemove);
     note.onUnexpectedEvent(onUnexpected);
     note.start();
 
@@ -93,29 +88,27 @@ TEST(InotifyTest, File)
     removeFile("/tmp/testfile");
     sleep(2);
 
-    EXPECT_EQ(modifyCount,1);
-    EXPECT_EQ(accessCount,1);
-    EXPECT_EQ(removeCount,1);
+    EXPECT_EQ(modifyCount, 1);
+    EXPECT_EQ(accessCount, 1);
+    EXPECT_EQ(removeCount, 1);
     EXPECT_TRUE(unexpectedCount > 0);
     note.stop();
 }
 
-TEST(InotifyTest, BadFile)
-{
+TEST(InotifyTest, BadFile) {
     Inotify note;
     createCount = 0;
 
     // Test ignoring watch on file which isn't there
     removeFile("/tmp/testfile");
     note.watchFile("/tmp/testfile");
-    note.onEvent(Event::create,onCreate);    
+    note.onEvent(Event::create, onCreate);
 
-    EXPECT_EQ(createCount,0);
+    EXPECT_EQ(createCount, 0);
     note.stop();
 }
 
-TEST(InotifyTest, Symlink)
-{
+TEST(InotifyTest, Symlink) {
     Inotify note;
     createCount = 0;
     modifyCount = 0;
@@ -129,10 +122,10 @@ TEST(InotifyTest, Symlink)
     createSymlink("/tmp/testlink");
 
     note.watchFile("/tmp/testfile");
-    note.onEvent(Event::create,onCreate);
-    note.onEvent(Event::modify,onModify);
-    note.onEvent(Event::access,onAccess);
-    note.onEvent(Event::remove_self|Event::remove,onRemove);
+    note.onEvent(Event::create, onCreate);
+    note.onEvent(Event::modify, onModify);
+    note.onEvent(Event::access, onAccess);
+    note.onEvent(Event::remove_self | Event::remove, onRemove);
     note.start();
 
     modifyFile();
@@ -144,15 +137,15 @@ TEST(InotifyTest, Symlink)
     removeFile("/tmp/testlink");
     sleep(2);
 
-    EXPECT_EQ(modifyCount,1);
-    EXPECT_EQ(accessCount,1);
-    EXPECT_EQ(removeCount,1);
+    EXPECT_EQ(modifyCount, 1);
+    EXPECT_EQ(accessCount, 1);
+    EXPECT_EQ(removeCount, 1);
 
     removeFile("/tmp/testfile");
 
     note.unwatchFile("/tmp/testfile");
 
-    EXPECT_EQ(note.hasStopped(),false);
+    EXPECT_EQ(note.hasStopped(), false);
 
     note.stop();
 }
