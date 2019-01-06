@@ -69,7 +69,7 @@ before_install:
   # Install cxxopts
   - wget https://github.com/jarro2783/cxxopts/archive/v2.1.1.tar.gz -O /tmp/cxxopts.tar.gz
   - tar zxf /tmp/cxxopts.tar.gz
-  - pushd cxxopts-* && mkdir build && cd build && cmake -D .. && sudo make install && popd
+  - pushd cxxopts-* && mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && sudo make install && popd
 
 script:
   - mkdir build
