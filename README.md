@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/CJLove/config-cpp.svg?branch=master)](https://travis-ci.org/CJLove/config-cpp)
+[![Coverage Status](https://coveralls.io/repos/github/CJLove/config-cpp/badge.svg?branch=master)](https://coveralls.io/github/CJLove/config-cpp?branch=master)
 
 
 # config-cpp
