@@ -10,7 +10,8 @@ pipeline {
                 }
             }
             steps {
-                echo 'config-cpp using gcc 8.3.1 in $WORKSPACE'
+                echo 'config-cpp using gcc 8.3.1'
+                sh 'ls /home/jenkins'
                 sh 'cd /home/jenkins/work'
                 sh 'mkdir -p gcc831'
                 sh 'cd gcc831'
