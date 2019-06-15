@@ -3,6 +3,7 @@ pipeline {
     stages {
         stage('gcc-8.3.1') {
             agent {
+                label { 'fir' }
                 docker {
                     image 'config-cpp-gcc831:latest'
                     args '-u jenkins -v $WORKSPACE:/home/jenkins/work'
