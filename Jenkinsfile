@@ -6,11 +6,11 @@ pipeline {
                 docker {
                     label 'fir'
                     image 'config-cpp-gcc831:latest'
-                    args '-u jenkins -v $WORKSPACE:/home/jenkins/work'
+                    args '-u jenkins -v $env.WORKSPACE:/home/jenkins/work'
                 }
             }
             steps {
-                echo 'config-cpp using gcc 8.3.1'
+                echo 'config-cpp using gcc 8.3.1 in $env.WORKSPACE'
                 sh 'cd /home/jenkins/work'
                 sh 'mkdir -p gcc831'
                 sh 'cd gcc831'
