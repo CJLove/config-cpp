@@ -17,7 +17,7 @@ pipeline {
                 }
             }
             steps {
-                echo "building config-cpp branch"
+                echo "building config-cpp branch ${env.BRANCH_NAME} using image ${params.IMAGE}"
                 dir ("${params.IMAGE}") {
                     sh 'cmake -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON ..'
                     sh 'make'
@@ -40,6 +40,22 @@ pipeline {
                     sh 'ctest --verbose'
                 }
             }
+        }
+
+        stage ('analysis') {
+            agent {
+                docker {
+                    label 'fir'
+                    image "${params.IMAGE}:latest"
+                }
+            }
+        }
+        when {
+            environment name: "RUN_ANALYSIS", value: 'true'
+        }
+        steps {
+            sh label: '', returnStatus: true, script: 'cppcheck . --xml --language=c++ --suppressions-list=suppressions.txt 2> cppcheck-result.xml'
+            publishCppcheck allowNoReport: true, ignoreBlankFiles: true, pattern: '**/cppcheck-result.xml'
         }
     }
     
