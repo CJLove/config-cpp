@@ -13,12 +13,12 @@ pipeline {
             agent {
                 docker {
                     label 'fir'
-                    image '${params.IMAGE}:latest'
+                    image "${params.IMAGE}:latest"
                 }
             }
             steps {
-                echo 'building config-cpp branch'
-                dir ('${params.IMAGE}') {
+                echo "building config-cpp branch"
+                dir ("${params.IMAGE}") {
                     sh 'cmake -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON ..'
                     sh 'make'
                 }
@@ -29,14 +29,14 @@ pipeline {
             agent {
                 docker {
                     label 'fir'
-                    image '${params.IMAGE}:latest'
+                    image "${params.IMAGE}:latest"
                 }
             }            
             when {
                 environment name: 'RUN_TESTS', value: 'true'
             }
             steps {
-                dir ('${params.IMAGE}') {
+                dir ("${params.IMAGE}") {
                     sh 'ctest --verbose'
                 }
             }
