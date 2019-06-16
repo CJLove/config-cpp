@@ -82,6 +82,7 @@ pipeline {
                         docker {
                             label 'fir'
                             image "config-cpp-gcc831:latest"
+                            args "--cap-add SYS_PTRACE"
                         }
                     }
                     steps {
