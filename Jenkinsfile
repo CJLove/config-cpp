@@ -49,7 +49,6 @@ pipeline {
                 }
             }
         }
-    }
 
         stage('gcc9.1.0') {
             when {
