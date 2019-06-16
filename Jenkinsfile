@@ -4,43 +4,73 @@ pipeline {
 	parameters {
         // Build on Fedora's default compiler as first sequential stage
         booleanParam name: 'Use_gcc8', defaultValue: true, description: 'Build/test using gcc8'
-        // Build remaining compilers in parallel stages
+        booleanParam name: 'Use_clang7', defaultValue: true, description: 'Build/test using clang7'
+        // Sanitizer tests in parallel stages
+        // Build alternative compilers in parallel stages
         booleanParam name: 'Use_gcc6', defaultValue: true, description: 'Build/test using gcc6'
         booleanParam name: 'Use_gcc7', defaultValue: true, description: 'Build/test using gcc7'
         booleanParam name: 'Use_gcc9', defaultValue: true, description: 'Build/test using gcc9'
 	}
     stages {
-        stage('gcc8.3.1') {
-            when {
-                environment name: 'Use_gcc8', value: 'true'
-            }
-            agent {
-                docker {
-                    label 'fir'
-                    image "config-cpp-gcc831:latest"
-                }
-            }
-            steps {
-                echo "building config-cpp branch ${env.BRANCH_NAME} using gcc 8.3.1"
-                dir ("gcc831") {
-                    sh 'cmake -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON ..'
-                    sh 'make'
-                    // Using CTest
-                    //sh 'ctest -T test --no-compress-output'
-                    // Using googletest directly
-                    sh "./test/ConfigCppTests --gtest_output=xml:unittests.xml"
-                }
+        stage('Parallel system compiler stages') {
+            failFast true
+            parallel {
+                stage('gcc8.3.1') {
+                    when {
+                        environment name: 'Use_gcc8', value: 'true'
+                    }
+                    agent {
+                        docker {
+                            label 'fir'
+                            image "config-cpp-gcc831:latest"
+                        }
+                    }
+                    steps {
+                        echo "building config-cpp branch ${env.BRANCH_NAME} using gcc 8.3.1"
+                        dir ("gcc831") {
+                            sh 'cmake -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON ..'
+                            sh 'make'
+                            sh "./test/ConfigCppTests --gtest_output=xml:unittests.xml"
+                        }
                 
-            }
-
-            post {
-                always {
-                    junit allowEmptyResults: true, testResults: 'gcc831/unittests.xml'
+                    }
+                
+                    post {
+                        always {
+                            junit allowEmptyResults: true, testResults: 'gcc831/unittests.xml'
+                        }
+                    }
+                }
+                stage('clang7') {
+                    when {
+                        environment name: 'Use_gcc8', value: 'true'
+                    }
+                    agent {
+                        docker {
+                            label 'fir'
+                            image "config-cpp-gcc831:latest"
+                        }
+                    }
+                    steps {
+                        echo "building config-cpp branch ${env.BRANCH_NAME} using clang 7"
+                        dir ("clang7") {
+                            sh 'CC=clang CXX=clang++ cmake -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON ..'
+                            sh 'make'
+                            sh "./test/ConfigCppTests --gtest_output=xml:unittests.xml"
+                        }
+                
+                    }
+                
+                    post {
+                        always {
+                            junit allowEmptyResults: true, testResults: 'clang/unittests.xml'
+                        }
+                    }
                 }
             }
         }
 
-        stage('Parallel compiler stages') {
+        stage('Parallel alternate compiler stages') {
             failFast true
             parallel {
                 stage('gcc9.1.0') {
@@ -58,8 +88,6 @@ pipeline {
                         dir ("gcc910") {
                             sh 'cmake -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON ..'
                             sh 'make'
-                            //sh 'ctest -T test --no-compress-output'
-                            // Using googletest directly
                             sh "./test/ConfigCppTests --gtest_output=xml:unittests.xml"
                         }
                 
@@ -87,8 +115,6 @@ pipeline {
                         dir ("gcc740") {
                             sh 'cmake -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON ..'
                             sh 'make'
-                            //sh 'ctest -T test --no-compress-output'
-                            // Using googletest directly
                             sh "./test/ConfigCppTests --gtest_output=xml:unittests.xml"
                         }
                 
@@ -116,8 +142,6 @@ pipeline {
                         dir ("gcc650") {
                             sh 'cmake -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON ..'
                             sh 'make'
-                            //sh 'ctest -T test --no-compress-output'
-                            // Using googletest directly
                             sh "./test/ConfigCppTests --gtest_output=xml:unittests.xml"
                         }
                 
