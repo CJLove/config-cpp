@@ -1,42 +1,38 @@
 pipeline {
     agent none
-    stages {
-        stage('gcc-8.3.1') {
-            agent {
-                docker {
-                    label 'fir'
-                    image 'config-cpp-gcc831:latest'
-                    args '-u jenkins'
-                }
-            }
-            steps {
-                echo 'building config-cpp branch ${env.BRANCH_NAME} using gcc 8.3.1'
-                dir ('gcc831') {
-                    sh 'cmake -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON ..'
-                    sh 'make'
-                    sh 'ctest --verbose'
-                }
-            }
 
+	parameters {
+        stringParam name: 'IMAGE', defaultValue: 'config-cpp-gcc831', description: 'Docker image'
+		booleanParam name: 'RUN_TESTS', defaultValue: true, description: 'Run Tests?'
+		booleanParam name: 'RUN_ANALYSIS', defaultValue: true, description: 'Run Static Code Analysis?'
+	}
+    stages {
+        agent {
+            docker {
+                label 'fir'
+                image '${params.IMAGE}:latest'
+            }
         }
 
-        stage('gcc-9.1.0') {
-            agent {
-                docker {
-                    label 'fir'
-                    image 'config-cpp-gcc910:latest'
-                    args '-u jenkins'
-                }
-            }
+        stage('build') {
             steps {
-                echo 'building config-cpp branch ${env.BRANCH_NAME} using gcc 9.1.0'
-                dir ('gcc910') {
+                echo 'building config-cpp branch'
+                dir ('${params.IMAGE}') {
                     sh 'cmake -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON ..'
                     sh 'make'
+                }
+            }
+        }
+
+        stage('test') {
+            when {
+                environment name: 'RUN_TESTS', value: 'true'
+            }
+            steps {
+                dir ('${params.IMAGE}') {
                     sh 'ctest --verbose'
                 }
             }
-
         }
     }
     
