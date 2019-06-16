@@ -24,7 +24,7 @@ pipeline {
                 dir ("gcc831") {
                     sh 'cmake -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON ..'
                     sh 'make'
-                    sh 'ctest -T --no-compress-output'
+                    sh 'ctest -T test --no-compress-output'
                 }
                 
             }
@@ -32,12 +32,6 @@ pipeline {
     }
     post {
         always {
-            // Archive the CTest xml output
-            archiveArtifacts (
-                artifacts: '*/Testing/**/*.xml',
-                fingerprint: true
-            )
-
             // Process the CTest xml output with the xUnit plugin
             xunit (
                 testTimeMargin: '3000',
