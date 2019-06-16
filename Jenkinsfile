@@ -7,14 +7,15 @@ pipeline {
 		booleanParam name: 'RUN_ANALYSIS', defaultValue: true, description: 'Run Static Code Analysis?'
 	}
     stages {
-        agent {
-            docker {
-                label 'fir'
-                image '${params.IMAGE}:latest'
-            }
-        }
+
 
         stage('build') {
+            agent {
+                docker {
+                    label 'fir'
+                    image '${params.IMAGE}:latest'
+                }
+            }
             steps {
                 echo 'building config-cpp branch'
                 dir ('${params.IMAGE}') {
@@ -25,6 +26,12 @@ pipeline {
         }
 
         stage('test') {
+            agent {
+                docker {
+                    label 'fir'
+                    image '${params.IMAGE}:latest'
+                }
+            }            
             when {
                 environment name: 'RUN_TESTS', value: 'true'
             }
