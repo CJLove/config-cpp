@@ -6,6 +6,7 @@ pipeline {
         booleanParam name: 'Use_gcc8', defaultValue: true, description: 'Build/test using gcc8'
         booleanParam name: 'Use_clang7', defaultValue: true, description: 'Build/test using clang7'
         // Sanitizer tests in parallel stages
+        booleanParam name: 'Run_sanitizers', defaultValue: true, description: 'Build/test using sanitizers'
         // Build alternative compilers in parallel stages
         booleanParam name: 'Use_gcc6', defaultValue: true, description: 'Build/test using gcc6'
         booleanParam name: 'Use_gcc7', defaultValue: true, description: 'Build/test using gcc7'
@@ -64,6 +65,71 @@ pipeline {
                     post {
                         always {
                             junit allowEmptyResults: true, testResults: 'clang/unittests.xml'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Parallel sanitizer stages') {
+            failFast true
+            parallel {
+                stage('asan') {
+                    when {
+                        environment name: 'Run_sanitizers', value: 'true'
+                    }
+                    agent {
+                        docker {
+                            label 'fir'
+                            image "config-cpp-gcc831:latest"
+                        }
+                    }
+                    steps {
+                        echo "building config-cpp branch ${env.BRANCH_NAME} with asan"
+                        dir ("asan") {
+                            sh 'cmake -DCMAKE_BUILD_TYPE=asan -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON ..'
+                            sh 'make'
+                            sh "./test/ConfigCppTests --gtest_output=xml:unittests.xml"
+                        }
+                    }
+                }
+
+                stage('tsan') {
+                    when {
+                        environment name: 'Run_sanitizers', value: 'true'
+                    }
+                    agent {
+                        docker {
+                            label 'fir'
+                            image "config-cpp-gcc831:latest"
+                        }
+                    }
+                    steps {
+                        echo "building config-cpp branch ${env.BRANCH_NAME} with asan"
+                        dir ("asan") {
+                            sh 'cmake -DCMAKE_BUILD_TYPE=tsan -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON ..'
+                            sh 'make'
+                            sh "./test/ConfigCppTests --gtest_output=xml:unittests.xml"
+                        }
+                    }
+                }
+
+                stage('ubsan') {
+                    when {
+                        environment name: 'Run_sanitizers', value: 'true'
+                    }
+                    agent {
+                        docker {
+                            label 'fir'
+                            image "config-cpp-gcc831:latest"
+                        }
+                    }
+                    steps {
+                        echo "building config-cpp branch ${env.BRANCH_NAME} with asan"
+                        dir ("asan") {
+                            sh 'cmake -DCMAKE_BUILD_TYPE=ubsan -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON ..'
+                            sh 'make'
+                            sh "./test/ConfigCppTests --gtest_output=xml:unittests.xml"
                         }
                     }
                 }
