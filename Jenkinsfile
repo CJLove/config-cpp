@@ -2,9 +2,11 @@ pipeline {
     agent none
 
 	parameters {
-        booleanParam name: 'Use_gcc6', defaultValue: false, description: 'Build/test using gcc6'
-        booleanParam name: 'Use_gcc7', defaultValue: true, description: 'Build/test using gcc7'
+        // Build on Fedora's default compiler as first sequential stage
         booleanParam name: 'Use_gcc8', defaultValue: true, description: 'Build/test using gcc8'
+        // Build remaining compilers in parallel stages
+        booleanParam name: 'Use_gcc6', defaultValue: true, description: 'Build/test using gcc6'
+        booleanParam name: 'Use_gcc7', defaultValue: true, description: 'Build/test using gcc7'
         booleanParam name: 'Use_gcc9', defaultValue: true, description: 'Build/test using gcc9'
 	}
     stages {
@@ -95,6 +97,35 @@ pipeline {
                     post {
                         always {
                             junit allowEmptyResults: true, testResults: 'gcc740/unittests.xml'
+                        }
+                    }
+                }
+
+                stage('gcc6.5.0') {
+                    when {
+                        environment name: 'Use_gcc6', value: 'true'
+                    }
+                    agent {
+                        docker {
+                            label 'fir'
+                            image "config-cpp-gcc650:latest"
+                        }
+                    }
+                    steps {
+                        echo "building config-cpp branch ${env.BRANCH_NAME} using gcc 6.5.0"
+                        dir ("gcc650") {
+                            sh 'cmake -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON ..'
+                            sh 'make'
+                            //sh 'ctest -T test --no-compress-output'
+                            // Using googletest directly
+                            sh "./test/ConfigCppTests --gtest_output=xml:unittests.xml"
+                        }
+                
+                    }
+
+                    post {
+                        always {
+                            junit allowEmptyResults: true, testResults: 'gcc650/unittests.xml'
                         }
                     }
                 }
