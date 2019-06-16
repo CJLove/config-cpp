@@ -6,7 +6,6 @@ pipeline {
         booleanParam name: 'Use_gcc7', defaultValue: false, description: 'Build/test using gcc7'
         booleanParam name: 'Use_gcc8', defaultValue: true, description: 'Build/test using gcc8'
         booleanParam name: 'Use_gcc9', defaultValue: false, description: 'Build/test using gcc9'
-        string name: 'IMAGE', defaultValue: 'config-cpp-gcc831', description: 'Docker image'
 	}
     stages {
         stage('gcc8.3.1') {
@@ -28,28 +27,30 @@ pipeline {
                 }
                 
             }
+
+            post {
+                always {
+                // Process the CTest xml output with the xUnit plugin
+                xunit (
+                    testTimeMargin: '3000',
+                    thresholdMode: 1,
+                    thresholds: [
+                        skipped(failureThreshold: '0'),
+                        failed(failureThreshold: '0')
+                    ],
+                    tools: [CTest(
+                        pattern: 'gcc831/Testing/**/*.xml',
+                        deleteOutputFiles: true,
+                        failIfNotNew: false,
+                    skipNoTestFiles: true,
+                    stopProcessingIfError: true
+                    )]
+                )
+                }
+            }
         }
     }
-    post {
-        always {
-            // Process the CTest xml output with the xUnit plugin
-            xunit (
-                testTimeMargin: '3000',
-                thresholdMode: 1,
-                thresholds: [
-                skipped(failureThreshold: '0'),
-                failed(failureThreshold: '0')
-                ],
-                tools: [CTest(
-                pattern: '*/Testing/**/*.xml',
-                deleteOutputFiles: true,
-                failIfNotNew: false,
-                skipNoTestFiles: true,
-                stopProcessingIfError: true
-                )]
-            )
-        }
-    }
+
 
     
 }
