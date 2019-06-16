@@ -33,7 +33,7 @@ pipeline {
 
             post {
                 always {
-                    xunit([GoogleTest(deleteOutputFiles: true, failIfNotNew: false, skipNoTestFiles: false, stopProcessingIfError: false)])
+                    junit allowEmptyResults: true, testResults: 'gcc831/unittests.xml'
                 }
             }
         }
@@ -65,7 +65,7 @@ pipeline {
 
                     post {
                         always {
-                            xunit([GoogleTest(deleteOutputFiles: true, failIfNotNew: false, skipNoTestFiles: false, stopProcessingIfError: false)])
+                            junit allowEmptyResults: true, testResults: 'gcc910/unittests.xml'
                         }
                     }
                 }
@@ -94,7 +94,7 @@ pipeline {
 
                     post {
                         always {
-                            xunit([GoogleTest(deleteOutputFiles: true, failIfNotNew: false, skipNoTestFiles: false, stopProcessingIfError: false)])
+                            junit allowEmptyResults: true, testResults: 'gcc740/unittests.xml'
                         }
                     }
                 }
