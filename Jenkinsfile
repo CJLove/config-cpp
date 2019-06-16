@@ -2,7 +2,7 @@ pipeline {
     agent none
 
 	parameters {
-        stringParam name: 'IMAGE', defaultValue: 'config-cpp-gcc831', description: 'Docker image'
+        string name: 'IMAGE', defaultValue: 'config-cpp-gcc831', description: 'Docker image'
 		booleanParam name: 'RUN_TESTS', defaultValue: true, description: 'Run Tests?'
 		booleanParam name: 'RUN_ANALYSIS', defaultValue: true, description: 'Run Static Code Analysis?'
 	}
