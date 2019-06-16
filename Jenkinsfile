@@ -106,7 +106,7 @@ pipeline {
                     }
                     steps {
                         echo "building config-cpp branch ${env.BRANCH_NAME} with asan"
-                        dir ("asan") {
+                        dir ("tsan") {
                             sh 'cmake -DCMAKE_BUILD_TYPE=tsan -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON ..'
                             sh 'make'
                             sh "./test/ConfigCppTests --gtest_output=xml:unittests.xml"
@@ -126,7 +126,7 @@ pipeline {
                     }
                     steps {
                         echo "building config-cpp branch ${env.BRANCH_NAME} with asan"
-                        dir ("asan") {
+                        dir ("ubsan") {
                             sh 'cmake -DCMAKE_BUILD_TYPE=ubsan -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON ..'
                             sh 'make'
                             sh "./test/ConfigCppTests --gtest_output=xml:unittests.xml"
