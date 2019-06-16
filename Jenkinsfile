@@ -33,22 +33,7 @@ pipeline {
 
             post {
                 always {
-                // Process the CTest xml output with the xUnit plugin
-                xunit (
-                    testTimeMargin: '3000',
-                    thresholdMode: 1,
-                    thresholds: [
-                        skipped(failureThreshold: '0'),
-                        failed(failureThreshold: '0')
-                    ],
-                    tools: [CTest(
-                        pattern: 'gcc831/unittests.xml',
-                        deleteOutputFiles: true,
-                        failIfNotNew: false,
-                    skipNoTestFiles: true,
-                    stopProcessingIfError: true
-                    )]
-                )
+                    xunit([GoogleTest(deleteOutputFiles: true, failIfNotNew: false, skipNoTestFiles: false, stopProcessingIfError: false)])
                 }
             }
         }
@@ -80,22 +65,7 @@ pipeline {
 
                     post {
                         always {
-                        // Process the CTest xml output with the xUnit plugin
-                        xunit (
-                            testTimeMargin: '3000',
-                            thresholdMode: 1,
-                            thresholds: [
-                                skipped(failureThreshold: '0'),
-                                failed(failureThreshold: '0')
-                            ],
-                            tools: [CTest(
-                                pattern: 'gcc910/unittests.xml',
-                                deleteOutputFiles: true,
-                                failIfNotNew: false,
-                                skipNoTestFiles: true,
-                                stopProcessingIfError: true
-                            )]
-                        )
+                            xunit([GoogleTest(deleteOutputFiles: true, failIfNotNew: false, skipNoTestFiles: false, stopProcessingIfError: false)])
                         }
                     }
                 }
@@ -124,22 +94,7 @@ pipeline {
 
                     post {
                         always {
-                        // Process the CTest xml output with the xUnit plugin
-                        xunit (
-                            testTimeMargin: '3000',
-                            thresholdMode: 1,
-                            thresholds: [
-                                skipped(failureThreshold: '0'),
-                                failed(failureThreshold: '0')
-                            ],
-                            tools: [CTest(
-                                pattern: 'gcc740/unittests.xml',
-                                deleteOutputFiles: true,
-                                failIfNotNew: false,
-                                skipNoTestFiles: true,
-                                stopProcessingIfError: true
-                            )]
-                        )
+                            xunit([GoogleTest(deleteOutputFiles: true, failIfNotNew: false, skipNoTestFiles: false, stopProcessingIfError: false)])
                         }
                     }
                 }
