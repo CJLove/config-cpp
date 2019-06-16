@@ -23,7 +23,10 @@ pipeline {
                 dir ("gcc831") {
                     sh 'cmake -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON ..'
                     sh 'make'
-                    sh 'ctest -T test --no-compress-output'
+                    // Using CTest
+                    //sh 'ctest -T test --no-compress-output'
+                    // Using googletest directly
+                    sh "./test/ConfigCppTests --gtest_output=xml:unittests.xml"
                 }
                 
             }
@@ -39,7 +42,7 @@ pipeline {
                         failed(failureThreshold: '0')
                     ],
                     tools: [CTest(
-                        pattern: 'gcc831/Testing/**/*.xml',
+                        pattern: 'gcc831/unittests.xml',
                         deleteOutputFiles: true,
                         failIfNotNew: false,
                     skipNoTestFiles: true,
@@ -68,7 +71,9 @@ pipeline {
                         dir ("gcc910") {
                             sh 'cmake -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON ..'
                             sh 'make'
-                            sh 'ctest -T test --no-compress-output'
+                            //sh 'ctest -T test --no-compress-output'
+                            // Using googletest directly
+                            sh "./test/ConfigCppTests --gtest_output=xml:unittests.xml"
                         }
                 
                     }
@@ -84,7 +89,7 @@ pipeline {
                                 failed(failureThreshold: '0')
                             ],
                             tools: [CTest(
-                                pattern: 'gcc910/Testing/**/*.xml',
+                                pattern: 'gcc910/unittests.xml',
                                 deleteOutputFiles: true,
                                 failIfNotNew: false,
                                 skipNoTestFiles: true,
@@ -110,7 +115,9 @@ pipeline {
                         dir ("gcc740") {
                             sh 'cmake -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON ..'
                             sh 'make'
-                            sh 'ctest -T test --no-compress-output'
+                            //sh 'ctest -T test --no-compress-output'
+                            // Using googletest directly
+                            sh "./test/ConfigCppTests --gtest_output=xml:unittests.xml"
                         }
                 
                     }
@@ -126,7 +133,7 @@ pipeline {
                                 failed(failureThreshold: '0')
                             ],
                             tools: [CTest(
-                                pattern: 'gcc740/Testing/**/*.xml',
+                                pattern: 'gcc740/unittests.xml',
                                 deleteOutputFiles: true,
                                 failIfNotNew: false,
                                 skipNoTestFiles: true,
