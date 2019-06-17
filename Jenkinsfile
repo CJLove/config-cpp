@@ -153,9 +153,9 @@ pipeline {
                     steps {
                         echo "building config-cpp branch ${env.BRANCH_NAME} using gcc 9.1.0"
                         dir ("gcc910") {
-                            sh 'cmake -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON ..'
-                            sh 'make'
-                            sh "./test/ConfigCppTests --gtest_output=xml:unittests.xml"
+                            sh 'CC=/opt/gcc910/bin/gcc CXX=/opt/gcc910/bin/g++ cmake -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON ..'
+                            sh 'LD_LIBRARY_PATH=/opt/gcc910/lib64 make'
+                            sh "LD_LIBRARY_PATH=/opt/gcc910/lib64 ./test/ConfigCppTests --gtest_output=xml:unittests.xml"
                         }
                 
                     }
@@ -180,9 +180,9 @@ pipeline {
                     steps {
                         echo "building config-cpp branch ${env.BRANCH_NAME} using gcc 7.4.0"
                         dir ("gcc740") {
-                            sh 'cmake -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON ..'
-                            sh 'make'
-                            sh "./test/ConfigCppTests --gtest_output=xml:unittests.xml"
+                            sh 'CC=/opt/gcc740/bin/gcc CXX=/opt/gcc740/bin/g++ cmake -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON ..'
+                            sh 'LD_LIBRARY_PATH=/opt/gcc740/lib64 make'
+                            sh "LD_LIBRARY_PATH=/opt/gcc740/lib64 ./test/ConfigCppTests --gtest_output=xml:unittests.xml"
                         }
                 
                     }
@@ -207,9 +207,9 @@ pipeline {
                     steps {
                         echo "building config-cpp branch ${env.BRANCH_NAME} using gcc 6.5.0"
                         dir ("gcc650") {
-                            sh 'cmake -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON ..'
-                            sh 'make'
-                            sh "./test/ConfigCppTests --gtest_output=xml:unittests.xml"
+                            sh 'CC=/opt/gcc650/bin/gcc CXX=/opt/gcc650/bin/g++ cmake -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON ..'
+                            sh 'LD_LIBRARY_PATH=/opt/gcc650/lib64 make'
+                            sh "LD_LIBRARY_PATH=/opt/gcc650/lib64 ./test/ConfigCppTests --gtest_output=xml:unittests.xml"
                         }
                 
                     }
