@@ -2,7 +2,7 @@ pipeline {
     agent none
 
 	parameters {
-        // Build on Fedora's default compiler as first sequential stage
+        // Build on Fedora's default compiler as first parallel stages
         booleanParam name: 'Use_gcc8', defaultValue: true, description: 'Build/test using gcc8'
         booleanParam name: 'Use_clang7', defaultValue: true, description: 'Build/test using clang7'
         // Sanitizer tests in parallel stages
@@ -44,7 +44,7 @@ pipeline {
                 }
                 stage('clang7') {
                     when {
-                        environment name: 'Use_gcc8', value: 'true'
+                        environment name: 'Use_clang7', value: 'true'
                     }
                     agent {
                         docker {
