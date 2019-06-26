@@ -15,6 +15,10 @@
 #endif
 
 namespace ConfigCpp {
+#define CONFIG_CPP_VERSION_MAJOR 0
+#define CONFIG_CPP_VERSION_MINOR 1
+#define CONFIG_CPP_VERSION_PATCH 0
+
 class ConfigCpp;
 
 /**
