@@ -332,4 +332,10 @@ void ConfigCpp::AddDoubleOption(const std::string &name, const std::string &help
         }
     }
 }
+
+void ConfigCpp::Version(uint32_t &major, uint32_t &minor, uint32_t &patch) {
+    major = CONFIG_CPP_VERSION_MAJOR;
+    minor = CONFIG_CPP_VERSION_MINOR;
+    patch = CONFIG_CPP_VERSION_PATCH;
+}
 }  // namespace ConfigCpp

@@ -277,6 +277,16 @@ public:
      */
     void AddDoubleOption(const std::string &name, const std::string &helpString = "");
 
+    /**
+     * @brief Return version information about the config-cpp library
+     * 
+     * @param major - major version
+     * @param minor - minor version
+     * @param patch - patch version
+     */
+    void Version(uint32_t &major, uint32_t &minor, uint32_t &patch);
+
+
 private:
     struct st_impl;
     std::unique_ptr<st_impl> m_pImpl;

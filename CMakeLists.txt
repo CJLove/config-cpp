@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.1)
 
 project(config-cpp)
+
+set(VERSION "0.1.0")
 #---------------------------------------------------------------------------------------
 # Build Types including support for sanitizers
 #---------------------------------------------------------------------------------------
