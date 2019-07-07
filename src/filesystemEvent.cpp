@@ -4,12 +4,10 @@
 
 namespace ConfigCpp {
 
-    FileSystemEvent::FileSystemEvent(): m_wd(0), m_mask(0) {}
-
-FileSystemEvent::FileSystemEvent(const int wd, uint32_t mask, const std::string& path,
+FileSystemEvent::FileSystemEvent(const int wd, uint32_t mask, std::string path,
                                  const std::chrono::steady_clock::time_point& eventTime)
-    : m_wd(wd), m_mask(mask), m_path(path), m_eventTime(eventTime) {}
-
-FileSystemEvent::~FileSystemEvent() {}
+    : m_wd(wd), m_mask(mask), m_path(std::move(path)), m_eventTime(eventTime) 
+    
+{}
 
 }  // namespace ConfigCpp

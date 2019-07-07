@@ -9,7 +9,15 @@ class YamlHandler {
 public:
     YamlHandler(const std::string &data, const Values &defaults, const Values &cmdLineArgs);
 
-    ~YamlHandler();
+    YamlHandler(const YamlHandler &rhs) = default;
+
+    YamlHandler(YamlHandler &&rhs) = default;
+
+    ~YamlHandler() = default;
+
+    YamlHandler &operator=(const YamlHandler &rhs) = default;
+
+    YamlHandler &operator=(YamlHandler &&rhs) = default;
 
     bool IsSet(const std::string &key) const;
 

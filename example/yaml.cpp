@@ -1,6 +1,6 @@
 // Sample application using ConfigCpp to handle yaml-based configuration file
-
 #include <iostream>
+
 #include "config-cpp/config-cpp.h"
 
 // User-provided type corresponding to yaml configuration data

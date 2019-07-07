@@ -131,6 +131,29 @@ find_package(Threads)
 # Google Test
 find_package(GTest)
 
+# clang-tidy
+if(ENABLE_CLANG_TIDY)
+  find_program(CLANGTIDY clang-tidy)
+  if(CLANGTIDY)
+    message(STATUS "Using ${CLANGTIDY} for clang-tidy")
+    set(CMAKE_CXX_CLANG_TIDY "${CLANGTIDY}")
+  else()
+    message(SEND_ERROR "clang-tidy requested but executable not found")
+  endif()
+endif()
+configure_file(.clang-tidy .clang-tidy COPYONLY)
+
+# cppcheck
+if(ENABLE_CPPCHECK)
+  find_program(CPPCHECK cppcheck)
+  if(CPPCHECK)
+    message(STATUS "Enabling cppcheck")
+    set(CMAKE_CXX_CPPCHECK ${CPPCHECK} --suppress=syntaxError --enable=all --inconclusive)
+  else()
+    message(SEND_ERROR "cppcheck requested but executable not found")
+  endif()
+endif()
+
 #---------------------------------------------------------------------------------------
 # Sources, headers, directories and libs
 #---------------------------------------------------------------------------------------
@@ -195,25 +218,6 @@ endif(BUILD_TESTS)
 #---------------------------------------------------------------------------------------
 # Addons
 #---------------------------------------------------------------------------------------
-# clang-tidy
-if(ENABLE_CLANG_TIDY)
-  find_program(CLANGTIDY clang-tidy)
-  if(CLANGTIDY)
-    set(CMAKE_CXX_CLANG_TIDY ${CLANGTIDY})
-  else()
-    message(SEND_ERROR "clang-tidy requested but executable not found")
-  endif()
-endif()
-
-# cppcheck
-if(ENABLE_CPPCHECK)
-  find_program(CPPCHECK cppcheck)
-  if(CPPCHECK)
-    set(CMAKE_CXX_CPPCHECK ${CPPCHECK} --suppress=syntaxError --enable=all --inconclusive)
-  else()
-    message(SEND_ERROR "cppcheck requested but executable not found")
-  endif()
-endif()
 
 # Formatting
 get_property(all_sources GLOBAL PROPERTY SRCS_LIST)

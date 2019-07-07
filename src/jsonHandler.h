@@ -3,15 +3,21 @@
 #include "nlohmann/json.hpp"
 #include "value.h"
 
-using nlohmann::json;
-
 namespace ConfigCpp {
 
 class JsonHandler {
 public:
     JsonHandler(const std::string &data, const Values &defaults, const Values &cmdLineArgs);
 
-    ~JsonHandler();
+    JsonHandler(const JsonHandler &rhs) = default;
+
+    JsonHandler(JsonHandler &&rhs) = default;
+
+    ~JsonHandler() = default;
+
+    JsonHandler &operator=(const JsonHandler &rhs) = default;
+
+    JsonHandler &operator=(JsonHandler &&rhs) = default;
 
     bool IsSet(const std::string &key) const;
 
@@ -23,11 +29,11 @@ public:
     std::string GetConfig() const;
 
 private:
-    bool GetNode(const std::string &key, json &node) const;
+    bool GetNode(const std::string &key, nlohmann::basic_json<> &node) const;
 
     bool AddDefaultNode(const Value &def);
 
-    json m_json;
+    nlohmann::basic_json<> m_json;
 };
 
 }  // namespace ConfigCpp

@@ -2,8 +2,6 @@
 
 #include "nlohmann/json.hpp"
 
-using nlohmann::json;
-
 namespace ConfigCpp {
 namespace JsonImpl {
 
@@ -18,11 +16,15 @@ namespace JsonImpl {
  */
 template <typename T>
 bool Unmarshal(T &t, const std::string &str) {
-    auto jsonData = json::parse(str);
     try {
+        auto jsonData = nlohmann::json::parse(str);
         t = jsonData;
         return true;
+    } catch (nlohmann::json::parse_error &e) {
+        return false;
     } catch (std::exception &e) {
+        return false;
+    } catch (...) {
         return false;
     }
 }

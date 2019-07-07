@@ -1,33 +1,26 @@
 #include "inotify.h"
 
-#include <string>
-#include <vector>
-#include <iostream>
 #include <cstring>
-
-#include <sys/epoll.h>
 #include <fcntl.h>
-#include <sys/types.h>
+#include <iostream>
+#include <string>
+#include <sys/epoll.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <unistd.h>
+#include <vector>
+
 
 namespace ConfigCpp {
 
 Inotify::Inotify()
-    : m_error(0)
-    , m_eventTimeout(0)
+    : m_eventTimeout(0)
     , m_lastEventTime(std::chrono::steady_clock::now())
     , m_eventMask(IN_ALL_EVENTS)
-    , m_threadSleep(250)
-    , m_inotifyFd(0)
     , m_onEventTimeout([](FileSystemEvent) {})
     , m_eventBuffer(MAX_EVENTS * (EVENT_SIZE + 16), 0)
-    , m_pipeReadIdx(0)
-    , m_pipeWriteIdx(1)
 {
-    m_stopped = false;
-
-    if (pipe2(m_stopPipeFd, O_NONBLOCK) == -1) {
+    if (pipe2(static_cast<int*>(m_stopPipeFd), O_NONBLOCK) == -1) {
         m_error = errno;
         std::stringstream errorStream;
         errorStream << "Can't initialize stop pipe ! " << strerror(m_error) << ".";
@@ -42,7 +35,7 @@ Inotify::Inotify()
         throw std::runtime_error(errorStream.str());
     }
 
-    m_epollFd = epoll_create1(0);
+    m_epollFd = epoll_create1(EPOLL_CLOEXEC);
     if (m_epollFd  == -1) {
         m_error = errno;
         std::stringstream errorStream;
@@ -55,7 +48,7 @@ Inotify::Inotify()
     if (epoll_ctl(m_epollFd, EPOLL_CTL_ADD, m_inotifyFd, &m_inotifyEpollEvent) == -1) {
         m_error = errno;
         std::stringstream errorStream;
-        errorStream << "Can't add inotify filedescriptor to epoll ! " << strerror(m_error) << ".";
+        errorStream << "Can't add inotify file descriptor to epoll ! " << strerror(m_error) << ".";
         throw std::runtime_error(errorStream.str());
     }
 
@@ -73,17 +66,11 @@ Inotify::~Inotify()
 {
     stop();
     
-    epoll_ctl(m_epollFd, EPOLL_CTL_DEL, m_inotifyFd, 0);
-    epoll_ctl(m_epollFd, EPOLL_CTL_DEL, m_stopPipeFd[m_pipeReadIdx], 0);
+    epoll_ctl(m_epollFd, EPOLL_CTL_DEL, m_inotifyFd, nullptr);
+    epoll_ctl(m_epollFd, EPOLL_CTL_DEL, m_stopPipeFd[m_pipeReadIdx], nullptr);
 
-    if (!close(m_inotifyFd)) {
-        m_error = errno;
-    }
-
-    if (!close(m_epollFd)) {
-        m_error = errno;
-    }
-
+    close(m_inotifyFd);
+    close(m_epollFd);
     close(m_stopPipeFd[m_pipeReadIdx]);
     close(m_stopPipeFd[m_pipeWriteIdx]);
 }
@@ -132,12 +119,12 @@ std::string Inotify::wdToPath(int wd)
 void Inotify::onEvent(Event event, EventObserver observer)
 {
     m_eventMask |= static_cast<std::uint32_t>(event);
-    m_eventObserver[event] = observer;
+    m_eventObserver[event] = std::move(observer);
 }
 
 void Inotify::onUnexpectedEvent(EventObserver observer)
 {
-    m_unexpectedEventObserver = observer;
+    m_unexpectedEventObserver = std::move(observer);
 }
 
 void Inotify::setEventTimeout(
@@ -145,7 +132,7 @@ void Inotify::setEventTimeout(
 {
     m_lastEventTime -= eventTimeout;
     m_eventTimeout = eventTimeout;
-    m_onEventTimeout = onEventTimeout;
+    m_onEventTimeout = std::move(onEventTimeout);
 }
 
 bool Inotify::getNextEvent( FileSystemEvent &event) {
@@ -170,8 +157,9 @@ void Inotify::stop()
 {
     m_stopped = true;
     sendStopSignal();
-    if (m_thread.joinable())
+    if (m_thread.joinable()) {
         m_thread.join();
+    }
 }
 
 void Inotify::start()
@@ -182,14 +170,16 @@ void Inotify::start()
 void Inotify::run()
 {
     while (true) {
-        if (m_stopped) break;
+        if (m_stopped)  {
+            break;
+        }
     
         FileSystemEvent fileSystemEvent;
         if (!getNextEvent(fileSystemEvent)) {
             continue;
         }
     
-        Event currentEvent = static_cast<Event>(fileSystemEvent.m_mask);
+        auto currentEvent = static_cast<Event>(fileSystemEvent.m_mask);
         bool dispatched = false;
 
         Notification notification { currentEvent, fileSystemEvent.m_path, fileSystemEvent.m_eventTime };
@@ -232,7 +222,7 @@ ssize_t Inotify::readEventsIntoBuffer(std::vector<uint8_t>& eventBuffer)
     ssize_t length = 0;
     length = 0;
     auto timeout = -1;
-    auto nFdsReady = epoll_wait(m_epollFd, m_epollEvents, MAX_EPOLL_EVENTS, timeout);
+    auto nFdsReady = epoll_wait(m_epollFd, static_cast<epoll_event*>(m_epollEvents), MAX_EPOLL_EVENTS, timeout);
 
     if (nFdsReady == -1) {
         return length;
@@ -260,9 +250,9 @@ void Inotify::readEventsFromBuffer(
 {
     ssize_t i = 0;
     while (i < length) {
-        inotify_event* event = ((struct inotify_event*)&buffer[i]);
+        auto event = reinterpret_cast<inotify_event*>(&buffer[i]);
 
-        if(event->mask & IN_IGNORED){
+        if((event->mask & IN_IGNORED) != 0){
             i += EVENT_SIZE + event->len;
             auto filePath = m_directoryMap[event->wd];
             m_directoryMap.erase(event->wd);
@@ -272,9 +262,9 @@ void Inotify::readEventsFromBuffer(
         }
 
         auto path = wdToPath(event->wd);
-        if (event->len) {
+        if (event->len > 0) {
         path += "/";
-        path += std::string(event->name,event->len);
+        path += std::string(static_cast<char*>(event->name),event->len);
         }
 
         FileSystemEvent fsEvent(event->wd, event->mask, path, std::chrono::steady_clock::now());
@@ -307,11 +297,8 @@ void Inotify::filterEvents(
 }
 
 bool Inotify::exists(const std::string &path) {
-    struct stat file_stat;
-    if (stat(path.c_str(), &file_stat) == 0) {
-        return true;
-    }
-    return false;
+    struct stat file_stat{};
+    return stat(path.c_str(), &file_stat) == 0;
 }
 
-}
+} // Namespace ConfigCpp

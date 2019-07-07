@@ -4,6 +4,9 @@ project (ConfigCppTests)
 
 enable_testing()
 
+# Disable clang-tidy checks for unit test code
+set(CMAKE_CXX_CLANG_TIDY "")
+
 include_directories( 
     .
     ${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR}

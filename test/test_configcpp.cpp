@@ -112,9 +112,8 @@ TEST(ConfigCppTest, Json) {
 
 TEST(ConfigCppTest, JsonCmdLineArgs) {
     int argc = 7;
-    const char *argv[] = {"test",      "--top-string", "cmdLineString",
-                          "--top-int", "555",        "--top-double", "555.555"};
-    ConfigCpp::ConfigCpp config(argc,(char **)argv);
+    const char *argv[] = {"test", "--top-string", "cmdLineString", "--top-int", "555", "--top-double", "555.555"};
+    ConfigCpp::ConfigCpp config(argc, (char **)argv);
 
     config.SetConfigName("config");
     config.AddConfigPath("../inputs/json");
@@ -240,9 +239,8 @@ TEST(ConfigCppTest, Yaml) {
 
 TEST(ConfigCppTest, YamlCmdLineArgs) {
     int argc = 7;
-    const char *argv[] = {"test",      "--top-string", "cmdLineString",
-                          "--top-int", "555",        "--top-double", "555.555"};
-    ConfigCpp::ConfigCpp config(argc,(char **)argv);
+    const char *argv[] = {"test", "--top-string", "cmdLineString", "--top-int", "555", "--top-double", "555.555"};
+    ConfigCpp::ConfigCpp config(argc, (char **)argv);
 
     config.SetConfigName("config");
     config.AddConfigPath("../inputs/yaml");

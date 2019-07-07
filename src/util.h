@@ -13,5 +13,5 @@ std::string symlinkName(const std::string &str);
 
 std::string normalizePath(const std::string &path);
 
-std::string longOption(const std::string &path);
+std::string longOption(const std::string &option);
 }  // namespace ConfigCpp

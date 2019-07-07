@@ -3,8 +3,6 @@
 #include "util.h"
 #include "yamlHandler.h"
 
-using namespace YAML;
-
 namespace ConfigCpp {
 
 YamlHandler::YamlHandler(const std::string &data, const Values &defaults, const Values &cmdLineArgs)
@@ -30,8 +28,6 @@ YamlHandler::YamlHandler(const std::string &data, const Values &defaults, const 
     }
 }
 
-YamlHandler::~YamlHandler() {}
-
 bool YamlHandler::IsSet(const std::string &key) const {
     YAML::Node node;
     auto keys = split(key, '.');
@@ -39,7 +35,7 @@ bool YamlHandler::IsSet(const std::string &key) const {
 }
 
 bool YamlHandler::GetBool(const std::string &key) const {
-    Node node;
+    YAML::Node node;
     auto keys = split(key, '.');
     if (GetNode(keys, m_yaml, node)) {
         try {
@@ -51,7 +47,7 @@ bool YamlHandler::GetBool(const std::string &key) const {
 }
 
 int YamlHandler::GetInt(const std::string &key) const {
-    Node node;
+    YAML::Node node;
     auto keys = split(key, '.');
     if (GetNode(keys, m_yaml, node)) {
         try {
@@ -63,7 +59,7 @@ int YamlHandler::GetInt(const std::string &key) const {
 }
 
 double YamlHandler::GetDouble(const std::string &key) const {
-    Node node;
+    YAML::Node node;
     auto keys = split(key, '.');
     if (GetNode(keys, m_yaml, node)) {
         try {
@@ -75,7 +71,7 @@ double YamlHandler::GetDouble(const std::string &key) const {
 }
 
 std::string YamlHandler::GetString(const std::string &key) const {
-    Node node;
+    YAML::Node node;
     auto keys = split(key, '.');
     if (GetNode(keys, m_yaml, node)) {
         try {
@@ -96,7 +92,7 @@ bool YamlHandler::GetNode(std::vector<std::string> &keys, const YAML::Node &cur,
         return true;
     }
     auto key = keys[0];
-    if (cur[key]) {
+    if (cur[key] != nullptr) {
         keys.erase(keys.begin());
         return GetNode(keys, cur[key], node);
     }

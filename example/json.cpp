@@ -1,7 +1,7 @@
 // Sample application using ConfigCpp to handle json-based configuration file
 
-#include <iostream>
 #include "config-cpp/config-cpp.h"
+#include <iostream>
 
 // User-provided type corresponding to json configuration data
 

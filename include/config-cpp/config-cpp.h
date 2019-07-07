@@ -61,7 +61,11 @@ public:
      * @param name - configuration name, used as the basename for config files
      * @param path - initial search directory for config files
      */
-    ConfigCpp(int argc, char **argv, const std::string &name, const std::string &path);
+    ConfigCpp(int argc, char **argv, std::string name, std::string path);
+
+    ConfigCpp(const ConfigCpp &rhs) = delete;
+
+    ConfigCpp(ConfigCpp &&rhs) noexcept = delete;
 
     /**
      * @brief Destroy the Config Cpp object
@@ -69,12 +73,16 @@ public:
      */
     ~ConfigCpp();
 
+    ConfigCpp &operator=(const ConfigCpp &rhs) = delete;
+
+    ConfigCpp &operator=(ConfigCpp &&rhs) noexcept = delete;
+
     /**
      * @brief Set the Config Name object
      *
      * @param name - configuration name, used as the basename for config files
      */
-    void SetConfigName(const std::string &name);
+    void SetConfigName(std::string name);
 
     /**
      * @brief Add a directory to the search path for config files
@@ -92,9 +100,9 @@ public:
     /**
      * @brief Specify the callback function to be invoked upon config file changes
      *
-     * @param function - std::function argument
+     * @param callback - std::function argument
      */
-    void OnConfigChange(Callback function);
+    void OnConfigChange(Callback callback);
 
     /**
      * @brief Read in config file located anywhere in the search path
@@ -247,15 +255,15 @@ public:
 
     /**
      * @brief Add a boolean command-line argument where presense implies a TRUE value
-     * 
-     * @param name - command-line argument name (optional short name,long name) 
+     *
+     * @param name - command-line argument name (optional short name,long name)
      * @param helpString - optional help text
      */
     void AddBoolOption(const std::string &name, const std::string &helpString = "");
 
     /**
      * @brief Add a command-line argument with a reguired integer value
-     * 
+     *
      * @param name - command-line argument name
      * @param helpString - optional help text
      */
@@ -263,7 +271,7 @@ public:
 
     /**
      * @brief Add a command-line argument with a required string value
-     * 
+     *
      * @param name - command-line argument name
      * @param helpString - optional help text
      */
@@ -271,7 +279,7 @@ public:
 
     /**
      * @brief Add a command-line argument with a required double value
-     * 
+     *
      * @param name - command-line argument name
      * @param helpString - optional help text
      */
@@ -279,13 +287,12 @@ public:
 
     /**
      * @brief Return version information about the config-cpp library
-     * 
+     *
      * @param major - major version
      * @param minor - minor version
      * @param patch - patch version
      */
     void Version(uint32_t &major, uint32_t &minor, uint32_t &patch);
-
 
 private:
     struct st_impl;

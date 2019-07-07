@@ -12,8 +12,8 @@
 
 struct YamlConfig {
     std::string top_string;
-    int top_int;
-    bool top_bool;
+    int top_int = 0;
+    bool top_bool = false;
 
     std::vector<std::string> top_list;
 
@@ -38,37 +38,41 @@ struct convert<YamlConfig> {
 
     static bool decode(const Node &node, YamlConfig &rhs) {
 
-        if (node["top-string"])
+        if (node["top-string"] != nullptr) {
             try {
                 rhs.top_string = node["top-string"].as<std::string>();
             } catch (...) {
             }
-        if (node["top-int"])
+        }
+        if (node["top-int"] != nullptr) {
             try {
                 rhs.top_int = node["top-int"].as<int>();
             } catch (...) {
             }
-        if (node["top-bool"])
+        }
+        if (node["top-bool"] != nullptr) {
             try {
                 rhs.top_bool = node["top-bool"].as<bool>();
             } catch (...) {
             }
-        if (node["top-list"])
+        }
+        if (node["top-list"] != nullptr) {
             try {
                 for (const auto &item : node["top-list"]) {
                     rhs.top_list.push_back(item.as<std::string>());
                 }
             } catch (...) {
             }
-        if (node["top-dict"])
+        }
+        if (node["top-dict"] != nullptr) {
             try {
                 for (const auto &item : node["top-dict"]) {
                     rhs.top_dict[item.first.as<std::string>()] = item.second.as<std::string>();
                 }
             } catch (...) {
             }
-
-        if (node["nested-list"])
+        }
+        if (node["nested-list"] != nullptr) {
             try {
                 for (const auto &item : node["nested-list"]) {
                     std::vector<std::string> l;
@@ -79,8 +83,8 @@ struct convert<YamlConfig> {
                 }
             } catch (...) {
             }
-
-        if (node["nested-dict"])
+        }
+        if (node["nested-dict"] != nullptr) {
             try {
                 for (const auto &item : node["nested-dict"]) {
                     std::map<std::string, std::string> m;
@@ -91,7 +95,7 @@ struct convert<YamlConfig> {
                 }
             } catch (...) {
             }
-
+        }
         return true;
     }
 };

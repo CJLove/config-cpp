@@ -1,12 +1,13 @@
 #pragma once
+
+#include <iostream>
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
-#include <iostream>
 
 #include "nlohmann/json.hpp"
 
-using nlohmann::json;
+//using nlohmann::json;
 
 // Sample user-provided datatype matching ../inputs/json/config.json
 //
@@ -15,8 +16,8 @@ using nlohmann::json;
 struct JsonConfig
 {
     std::string top_string;
-    int top_int;
-    bool top_bool;
+    int top_int = 0;
+    bool top_bool = false;
 
     std::vector<std::string> top_list;
 
@@ -27,13 +28,14 @@ struct JsonConfig
     std::map<std::string, std::map<std::string, std::string>> nested_dict;
 
     bool operator==(const JsonConfig &rhs) const;
+
 };
 
 std::ostream &operator<<(std::ostream &os, const JsonConfig &s);
 
-void to_json(json &j, const JsonConfig &s);
+void to_json(nlohmann::basic_json<> &j, const JsonConfig &s);
 
-void from_json(const json &j, JsonConfig &s);
+void from_json(const nlohmann::basic_json<> &j, JsonConfig &s);
 
 
 

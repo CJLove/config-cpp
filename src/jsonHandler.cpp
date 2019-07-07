@@ -3,6 +3,8 @@
 #include "jsonHandler.h"
 #include "util.h"
 
+using nlohmann::json;
+
 namespace ConfigCpp {
 
 JsonHandler::JsonHandler(const std::string &data, const Values &defaults, const Values &cmdLineArgs) {
@@ -25,8 +27,6 @@ JsonHandler::JsonHandler(const std::string &data, const Values &defaults, const 
         AddDefaultNode(arg);
     }
 }
-
-JsonHandler::~JsonHandler() {}
 
 bool JsonHandler::IsSet(const std::string &key) const {
     // return (m_json.count(key) > 0);
@@ -83,7 +83,7 @@ bool JsonHandler::GetNode(const std::string &key, json &node) const {
     auto cur = m_json;
     auto next = cur;
     for (const auto &k : keys) {
-        if (cur.count(k)) {
+        if (cur.count(k) > 0) {
             next = cur[k];
             cur = next;
         } else {

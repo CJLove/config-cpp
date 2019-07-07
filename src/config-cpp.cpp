@@ -40,7 +40,7 @@ struct ConfigCpp::st_impl {
     std::unique_ptr<Inotify> m_inotify;
     Values m_defaults;
     cxxopts::Options m_options;
-    std::map<std::string,Value::ValueType> m_optionTypes;
+    std::map<std::string, Value::ValueType> m_optionTypes;
     Values m_cmdLineArgs;
     bool m_cmdLineParsed;
 
@@ -53,39 +53,40 @@ struct ConfigCpp::st_impl {
           m_argv(argv),
           m_type(ConfigType::UNKNOWN),
           m_inotify(std::make_unique<Inotify>()),
-          m_options(argv ? argv[0] : ""),
+          m_options(argv != nullptr ? argv[0] : ""),
           m_cmdLineParsed(false) {
-              m_options.add_options()
-              ("help","Print help");
-          }
+        m_options.add_options()("help", "Print help");
+    }
 
-    st_impl(ConfigCpp &config, int argc, char **argv, const std::string &name, const std::string &path)
+    st_impl(ConfigCpp &config, int argc, char **argv, std::string name, const std::string &path)
         : m_config(config),
           m_argc(argc),
           m_argv(argv),
-          m_name(name),
+          m_name(std::move(name)),
           m_type(ConfigType::UNKNOWN),
           m_inotify(std::make_unique<Inotify>()),
-          m_options(argv ? argv[0] : ""),
+          m_options(argv != nullptr ? argv[0] : ""),
           m_cmdLineParsed(false) {
         m_path.push_back(normalizePath(path));
-        m_options.add_options()
-        ("help","Print help");
+        m_options.add_options()("help", "Print help");
     }
 
-    ~st_impl() {
-        // Stop the inotify thread if it is running
-        if (!m_inotify->hasStopped())
-            m_inotify->stop();
-    }
+    st_impl(const st_impl &rhs) = delete;
+    st_impl(st_impl &&rhs) noexcept = delete;
+
+    ~st_impl() = default;
+
+    st_impl &operator=(const st_impl &rhs) = delete;
+    st_impl &operator=(st_impl &&rhs) noexcept = delete;
 };
 
 void ConfigCpp::st_impl::handleNotification(Notification notification) {
     // std::cout << "Registered Event " << notification.m_event << " on " << notification.m_path << " at "
     //           << notification.m_time.time_since_epoch().count() << " was triggered\n";
 
-    if (m_callback)
+    if (m_callback) {
         m_callback(m_config);
+    }
 
     // (re)-register watch for the symlink
     if (notification.m_event == Event::remove) {
@@ -102,14 +103,20 @@ void ConfigCpp::st_impl::handleNotification(Notification notification) {
 
 ConfigCpp::ConfigCpp(int argc, char **argv) : m_pImpl(std::make_unique<ConfigCpp::st_impl>(*this, argc, argv)) {}
 
-ConfigCpp::ConfigCpp(int argc, char **argv, const std::string &name, const std::string &path)
-    : m_pImpl(std::make_unique<ConfigCpp::st_impl>(*this, argc, argv, name, path)) {}
+ConfigCpp::ConfigCpp(int argc, char **argv, std::string name, std::string path)
+    : m_pImpl(std::make_unique<ConfigCpp::st_impl>(*this, argc, argv, std::move(name), std::move(path))) {}
 
-ConfigCpp::~ConfigCpp() {}
+ConfigCpp::~ConfigCpp()
+{
+        // Stop the inotify thread if it is running
+        if (!m_pImpl->m_inotify->hasStopped()) {
+            m_pImpl->m_inotify->stop();
+        }
+}
 
-void ConfigCpp::SetConfigName(const std::string &name) { m_pImpl->m_name = name; }
+void ConfigCpp::SetConfigName(std::string name) { m_pImpl->m_name = std::move(name); }
 
-void ConfigCpp::AddConfigPath(const std::string &path) { m_pImpl->m_path.push_back(normalizePath(path)); }
+void ConfigCpp::AddConfigPath(const std::string &path) { m_pImpl->m_path.push_back(std::move(normalizePath(path))); }
 
 void ConfigCpp::WatchConfig() {
     std::cout << "Adding watch for " << m_pImpl->m_configFileName << "\n";
@@ -134,31 +141,31 @@ void ConfigCpp::WatchConfig() {
     m_pImpl->m_inotify->start();
 }
 
-void ConfigCpp::OnConfigChange(Callback callback) { m_pImpl->m_callback = callback; }
+void ConfigCpp::OnConfigChange(Callback callback) { m_pImpl->m_callback = std::move(callback); }
 
 bool ConfigCpp::ReadInConfig() {
-    if (!m_pImpl->m_cmdLineParsed && m_pImpl->m_optionTypes.size() > 0) {
+    if (!m_pImpl->m_cmdLineParsed && !m_pImpl->m_optionTypes.empty()) {
         try {
             auto result = m_pImpl->m_options.parse(m_pImpl->m_argc, m_pImpl->m_argv);
-            if (result.count("help")) {
+            if (result.count("help") != 0) {
                 std::cout << m_pImpl->m_options.help({""}) << std::endl;
                 exit(1);
             }
             auto args = result.arguments();
-            for (const auto &arg: args) {
+            for (const auto &arg : args) {
                 switch (m_pImpl->m_optionTypes[arg.key()]) {
                     case Value::ValueType::BOOL:
-                    m_pImpl->m_cmdLineArgs.push_back(Value(arg.key(),arg.as<bool>()));
-                    break;
+                        m_pImpl->m_cmdLineArgs.push_back(Value(arg.key(), arg.as<bool>()));
+                        break;
                     case Value::ValueType::INT:
-                    m_pImpl->m_cmdLineArgs.push_back(Value(arg.key(),arg.as<int>()));
-                    break;
+                        m_pImpl->m_cmdLineArgs.push_back(Value(arg.key(), arg.as<int>()));
+                        break;
                     case Value::ValueType::STRING:
-                    m_pImpl->m_cmdLineArgs.push_back(Value(arg.key(),arg.as<std::string>()));
-                    break;
+                        m_pImpl->m_cmdLineArgs.push_back(Value(arg.key(), arg.as<std::string>()));
+                        break;
                     case Value::ValueType::DOUBLE:
-                    m_pImpl->m_cmdLineArgs.push_back(Value(arg.key(),arg.as<double>()));
-                    break;
+                        m_pImpl->m_cmdLineArgs.push_back(Value(arg.key(), arg.as<double>()));
+                        break;
                 }
             }
             m_pImpl->m_cmdLineParsed = true;
@@ -180,7 +187,7 @@ bool ConfigCpp::ReadInConfig() {
         auto name = path + m_pImpl->m_name;
 #if defined(YAML_SUPPORT)
         if (m_pImpl->m_type == ConfigType::UNKNOWN || m_pImpl->m_type == ConfigType::YAML) {
-            for (const auto ext : yamlExtensions) {
+            for (const auto &ext : yamlExtensions) {
                 std::ifstream file(name + ext);
                 if (file.good()) {
                     try {
@@ -188,7 +195,7 @@ bool ConfigCpp::ReadInConfig() {
                         stream << file.rdbuf();
                         m_pImpl->m_configFileName = name + ext;
                         m_pImpl->m_type = ConfigType::YAML;
-                        m_pImpl->m_data.reset(new ConfigCppData<YamlHandler>(stream.str(), m_pImpl->m_defaults, m_pImpl->m_cmdLineArgs));
+                        m_pImpl->m_data = std::make_unique<ConfigCppData<YamlHandler>>(stream.str(), m_pImpl->m_defaults, m_pImpl->m_cmdLineArgs);
                         return true;
                     } catch (...) {
                         std::cout << "Failed to read " << name + ext << "\n";
@@ -199,7 +206,7 @@ bool ConfigCpp::ReadInConfig() {
 #endif
 #if defined(JSON_SUPPORT)
         if (m_pImpl->m_type == ConfigType::UNKNOWN || m_pImpl->m_type == ConfigType::JSON) {
-            for (const auto ext : jsonExtensions) {
+            for (const auto &ext : jsonExtensions) {
                 std::ifstream file(name + ext);
                 if (file.good()) {
                     try {
@@ -207,7 +214,7 @@ bool ConfigCpp::ReadInConfig() {
                         stream << file.rdbuf();
                         m_pImpl->m_configFileName = name + ext;
                         m_pImpl->m_type = ConfigType::JSON;
-                        m_pImpl->m_data.reset(new ConfigCppData<JsonHandler>(stream.str(), m_pImpl->m_defaults, m_pImpl->m_cmdLineArgs));
+                        m_pImpl->m_data = std::make_unique<ConfigCppData<JsonHandler>>(stream.str(), m_pImpl->m_defaults, m_pImpl->m_cmdLineArgs);
                         return true;
                     } catch (...) {
                         std::cout << "Failed to read " << name + ext << "\n";
@@ -221,40 +228,46 @@ bool ConfigCpp::ReadInConfig() {
 }
 
 std::string ConfigCpp::GetConfigData() const {
-    if (m_pImpl->m_data)
+    if (m_pImpl->m_data) {
         return m_pImpl->m_data->GetConfig();
+    }
     return "";
 }
 
 ConfigType ConfigCpp::GetConfigType() const { return m_pImpl->m_type; }
 
 bool ConfigCpp::IsSet(const std::string &key) const {
-    if (m_pImpl->m_data)
+    if (m_pImpl->m_data) {
         return m_pImpl->m_data->IsSet(key);
+    }
     return false;
 }
 
 bool ConfigCpp::GetBool(const std::string &key) const {
-    if (m_pImpl->m_data)
+    if (m_pImpl->m_data) {
         return m_pImpl->m_data->GetBool(key);
+    }
     return false;
 }
 
 int ConfigCpp::GetInt(const std::string &key) const {
-    if (m_pImpl->m_data)
+    if (m_pImpl->m_data) {
         return m_pImpl->m_data->GetInt(key);
+    }
     return 0;
 }
 
 double ConfigCpp::GetDouble(const std::string &key) const {
-    if (m_pImpl->m_data)
+    if (m_pImpl->m_data) {
         return m_pImpl->m_data->GetDouble(key);
+    }
     return 0.0;
 }
 
 std::string ConfigCpp::GetString(const std::string &key) const {
-    if (m_pImpl->m_data)
+    if (m_pImpl->m_data) {
         return m_pImpl->m_data->GetString(key);
+    }
     return "";
 }
 

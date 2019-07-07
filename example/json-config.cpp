@@ -40,8 +40,8 @@ std::ostream &operator<<(std::ostream &os, const JsonConfig &s)
     return os;
 }
 
-void to_json(json &j, const JsonConfig &s) {
-    j = json{
+void to_json(nlohmann::basic_json<> &j, const JsonConfig &s) {
+    j = nlohmann::basic_json<>{
         {"top-string",s.top_string}, 
         {"top-int", s.top_int}, 
         {"top-bool", s.top_bool},
@@ -50,7 +50,7 @@ void to_json(json &j, const JsonConfig &s) {
     };
 }
 
-void from_json(const json &j, JsonConfig &s) {
+void from_json(const nlohmann::basic_json<> &j, JsonConfig &s) {
     j.at("top-string").get_to(s.top_string);
     j.at("top-int").get_to(s.top_int);
     j.at("top-bool").get_to(s.top_bool);
