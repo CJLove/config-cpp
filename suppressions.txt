@@ -1,1 +1,5 @@
-*:*CMakeFiles\*:build
+// cppcheck suppressions list - clean on Linux using cppcheck 1.87
+//
+//
+// Ignore style diagnostic for yaml sample code
+*:*/example/*

@@ -186,8 +186,9 @@ void Inotify::run()
 
         for (auto& eventAndEventObserver : m_eventObserver) {
             auto& event = eventAndEventObserver.first;
-            auto& eventObserver = eventAndEventObserver.second;
+            
             if (ConfigCpp::containsEvent(event, currentEvent)) {
+                auto& eventObserver = eventAndEventObserver.second;
                 eventObserver(notification);
                 dispatched = true;
                 break;

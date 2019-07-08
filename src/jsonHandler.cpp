@@ -81,10 +81,9 @@ std::string JsonHandler::GetString(const std::string &key) const {
 bool JsonHandler::GetNode(const std::string &key, json &node) const {
     auto keys = split(key, '.');
     auto cur = m_json;
-    auto next = cur;
     for (const auto &k : keys) {
         if (cur.count(k) > 0) {
-            next = cur[k];
+            auto next = cur[k];
             cur = next;
         } else {
             return false;

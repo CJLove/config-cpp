@@ -9,15 +9,15 @@ class ConfigCppBase {
 public:
     ConfigCppBase() = default;
 
-    ConfigCppBase(const ConfigCppBase &rhs) = default;
+    ConfigCppBase(const ConfigCppBase &rhs) = delete;
 
-    ConfigCppBase(ConfigCppBase &&rhs) = default;
+    ConfigCppBase(ConfigCppBase &&rhs) = delete;
 
     virtual ~ConfigCppBase() = default;
 
-    ConfigCppBase &operator=(const ConfigCppBase &rhs) = default;
+    ConfigCppBase &operator=(const ConfigCppBase &rhs) = delete;
 
-    ConfigCppBase &operator=(ConfigCppBase &&rhs) noexcept = default;
+    ConfigCppBase &operator=(ConfigCppBase &&rhs) noexcept = delete;
 
     virtual bool IsSet(const std::string &key) const = 0;
 
@@ -35,25 +35,15 @@ public:
     ConfigCppData(const std::string &data, const Values &defaults, const Values &cmdLineArgs)
         : ConfigCppBase(), m_handler(data, defaults, cmdLineArgs) {}
 
-    ConfigCppData(const ConfigCppData &rhs) { m_handler = rhs.m_handler; }
+    ConfigCppData(const ConfigCppData &rhs) = delete;
 
-    ConfigCppData(ConfigCppData &&rhs) noexcept { m_handler = std::move(rhs.m_handler); }
+    ConfigCppData(ConfigCppData &&rhs) = delete;
 
     ~ConfigCppData() override = default;
 
-    ConfigCppData &operator=(const ConfigCppData &rhs) {
-        if (this != &rhs) {
-            m_handler = rhs.m_handler;
-        }
-        return *this;
-    }
+    ConfigCppData &operator=(const ConfigCppData &rhs) = delete;
 
-    ConfigCppData &operator=(ConfigCppData &&rhs) noexcept {
-        if (this != &rhs) {
-            m_handler = std::move(rhs.m_handler);
-        }
-        return *this;
-    }
+    ConfigCppData &operator=(ConfigCppData &&rhs) = delete;
 
     bool IsSet(const std::string &key) const override { return m_handler.IsSet(key); }
 
