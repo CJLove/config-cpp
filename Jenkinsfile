@@ -56,7 +56,8 @@ pipeline {
                     steps {
                         echo "building config-cpp branch ${env.BRANCH_NAME} using clang 7"
                         dir ("clang7") {
-                            sh 'CC=clang CXX=clang++ cmake -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON ..'
+                            // Enable cppcheck on this build and expect clean results
+                            sh 'CC=clang CXX=clang++ cmake -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON -DENABLE_CPPCHECK=TRUE ..'
                             sh 'make'
                             sh "./test/ConfigCppTests --gtest_output=xml:unittests.xml"
                         }
