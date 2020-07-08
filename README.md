@@ -97,7 +97,7 @@ double doubleVal = config.GetDouble("key.double");
 ```
 
 ### Unmarshalling to native types
-See the JSON and YAML libraries for requirements.
+See the JSON, YAML and TOML libraries for requirements.
 ```c++
 JsonType myJsonConfig;
 if (config.UnmarshalJson<JsonType>(myJsonConfig)) {
@@ -106,6 +106,11 @@ if (config.UnmarshalJson<JsonType>(myJsonConfig)) {
 
 YamlType myYamlConfig;
 if (config.UnmarshalYaml<YamlType>(myYamlConfig)) {
+    ...
+}
+
+TomlType myTomlConfig;
+if (config.UnmarshalToml<TomlType>(myTomlConfig)) {
     ...
 }
 ```
