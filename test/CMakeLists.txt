@@ -35,6 +35,12 @@ if (JSON_SUPPORT)
     )
 endif(JSON_SUPPORT)
 
+if (TOML_SUPPORT)
+    set (ConfigCppTests_SRC ${ConfigCppTests_SRC}
+        test_tomlHandler.cpp
+    )
+endif(TOML_SUPPORT)
+
 add_executable ( ConfigCppTests ${ConfigCppTests_SRC} )
 
 

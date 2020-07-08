@@ -22,6 +22,10 @@
 #include "yamlHandler.h"
 #endif
 
+#if defined(TOML_SUPPORT)
+#include "tomlHandler.h"
+#endif
+
 namespace ConfigCpp {
 
 /**
@@ -182,6 +186,7 @@ bool ConfigCpp::ReadInConfig() {
     }
     static std::vector<std::string> yamlExtensions = {".yml", ".yaml"};
     static std::vector<std::string> jsonExtensions = {".json"};
+    static std::vector<std::string> tomlExtensions = {".toml"};
 
     for (const auto &path : m_pImpl->m_path) {
         auto name = path + m_pImpl->m_name;
@@ -223,6 +228,26 @@ bool ConfigCpp::ReadInConfig() {
             }
         }
 #endif
+#if defined(TOML_SUPPORT)
+        if (m_pImpl->m_type == ConfigType::UNKNOWN || m_pImpl->m_type == ConfigType::TOML) {
+            for (const auto &ext : tomlExtensions) {
+                std::ifstream file(name + ext);
+                if (file.good()) {
+                    try {
+                        std::stringstream stream;
+                        stream << file.rdbuf();
+                        m_pImpl->m_configFileName = name + ext;
+                        m_pImpl->m_type = ConfigType::TOML;
+                        m_pImpl->m_data = std::make_unique<ConfigCppData<TomlHandler>>(stream.str(), m_pImpl->m_defaults, m_pImpl->m_cmdLineArgs);
+                        return true;
+                    } catch (...) {
+                        std::cout << "Failed to read " << name + ext << "\n";
+                    }
+                }
+            }
+        }
+#endif
+
     }
     return false;
 }

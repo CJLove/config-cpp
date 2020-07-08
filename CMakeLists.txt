@@ -76,6 +76,7 @@ endif(NOT CMAKE_BUILD_TYPE)
 #---------------------------------------------------------------------------------------
 option(YAML_SUPPORT "Support YAML config files" ON)
 option(JSON_SUPPORT "Support JSON config files" ON)
+option(TOML_SUPPORT "Support TOML config files" ON)
 option(BUILD_EXAMPLES "Build examples" ON)
 option(BUILD_TESTS "Build unit tests." ON)
 option(BUILD_COVERAGE "Build for code coverage." OFF)
@@ -122,6 +123,13 @@ if (JSON_SUPPORT)
 
     add_definitions(-DJSON_SUPPORT)
 endif(JSON_SUPPORT)
+
+if (TOML_SUPPORT)
+    # toml11 library dependency
+    find_package(toml11 REQUIRED)
+
+    add_definitions(-DTOML_SUPPORT)
+endif(TOML_SUPPORT)
 
 find_package(cxxopts REQUIRED)
 

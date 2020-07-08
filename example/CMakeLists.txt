@@ -13,6 +13,12 @@ if (YAML_SUPPORT)
     target_link_libraries( yaml config-cpp )
 endif(YAML_SUPPORT)
 
+if (TOML_SUPPORT)
+    add_executable( toml toml.cpp toml-config.cpp )
+
+    target_link_libraries( toml config-cpp )
+endif(TOML_SUPPORT)
+
 if (JSON_SUPPORT)
     add_executable( json json.cpp json-config.cpp )
 

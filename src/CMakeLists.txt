@@ -33,7 +33,13 @@ if (JSON_SUPPORT)
     set (config-cpp_SRC ${config-cpp_SRC}
         jsonHandler.cpp
     )
-endif (JSON_SUPPORT)   
+endif (JSON_SUPPORT)
+
+if (TOML_SUPPORT)
+    set (config-cpp_SRC ${config-cpp_SRC}
+        tomlHandler.cpp
+    )
+endif (TOML_SUPPORT)
 
 if(BUILD_SHARED_LIBS)
     add_library( config-cpp SHARED ${config-cpp_SRC} )

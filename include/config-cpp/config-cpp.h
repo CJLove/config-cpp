@@ -14,6 +14,11 @@
 #include "config-cpp/unmarshal-json.h"
 #endif
 
+#if defined(TOML_SUPPORT)
+// Helper function for unmarshalling toml
+#include "config-cpp/unmarshal-toml.h"
+#endif
+
 namespace ConfigCpp {
 #define CONFIG_CPP_VERSION_MAJOR 0
 #define CONFIG_CPP_VERSION_MINOR 1
@@ -31,7 +36,7 @@ using Callback = std::function<void(ConfigCpp &)>;
  * @brief Configuration data types
  *
  */
-enum class ConfigType { YAML, JSON, UNKNOWN };
+enum class ConfigType { YAML, JSON, TOML, UNKNOWN };
 
 /**
  * @brief The ConfigCpp class is the primary interface to config data coming from a
@@ -144,6 +149,8 @@ public:
                 return YamlImpl::Unmarshal(t, GetConfigData());
             case ConfigType::JSON:
                 return false;
+            case ConfigType::TOML:
+                return false;                
         }
 #endif
         return false;
@@ -165,12 +172,40 @@ public:
                 return false;
             case ConfigType::YAML:
                 return false;
+            case ConfigType::TOML:
+                return false;
             case ConfigType::JSON:
                 return JsonImpl::Unmarshal(t, GetConfigData());
         }
 #endif
         return false;
     }
+
+    /**
+     * @brief Unmarshal YAML configuration data to a user-provided type
+     *
+     * @tparam T - user-provided type
+     * @param t - reference to variable of the user-provided type
+     * @return true - unmarshal was successful
+     * @return false - unmarshal was unsuccessful
+     */
+    template <typename T>
+    bool UnmarshalToml(T &t) {
+#if defined(YAML_SUPPORT)
+        switch (GetConfigType()) {
+            case ConfigType::UNKNOWN:
+                return false;
+            case ConfigType::YAML:
+                return false;
+            case ConfigType::JSON:
+                return false;
+            case ConfigType::TOML:
+                return TomlImpl::Unmarshal(t, GetConfigData());                
+        }
+#endif
+        return false;
+    }
+
 
     /**
      * @brief Return indication of whether a particular key is in the config data

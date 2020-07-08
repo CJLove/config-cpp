@@ -6,8 +6,8 @@
 
 C++ Configuration library patterned after [`viper`](https://github.com/spf13/viper) package for golang.  It is designed to work within an application and handle configuration needs.
 
-- framework for companion libraries which can read from JSON, YAML
-- unmarshalling configuration data to native C++ types
+- framework for companion libraries which can read from JSON, YAML, TOML
+- unmarshalling configuration data to native C++ types where supported
 - setting defaults
 - TODO: reading from environment variables
 - TODO: reading from command line flags
@@ -26,9 +26,10 @@ ConfigCpp uses the following precedence order.  Each item takes precedence over 
 - CMake
 - cxxopts (https://github.com/jarro2783/cxxopts)
 
-Also one or both of the following:
+Also one or more of the following:
 - Json for Modern C++ (https://github.com/nlohmann/json)
 - Yaml-cpp (https://github.com/jbeder/yaml-cpp)
+- Toml11 (https://github.com/ToruNiina/toml11)
 
 ## Basic Usage
 
