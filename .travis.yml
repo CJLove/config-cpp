@@ -41,6 +41,24 @@ matrix:
         sources: ['ubuntu-toolchain-r-test']
         packages: ['g++-8', 'libboost-all-dev' ] 
 
+  - os: linux
+    compiler: gcc
+    env:
+      - MATRIX_EVAL="CC=gcc-9 && CXX=g++-9"
+    addons:
+      apt:
+        sources: ['ubuntu-toolchain-r-test']
+        packages: ['g++-9', 'libboost-all-dev' ] 
+
+  - os: linux
+    compiler: gcc
+    env:
+      - MATRIX_EVAL="CC=gcc-10 && CXX=g++-10"
+    addons:
+      apt:
+        sources: ['ubuntu-toolchain-r-test']
+        packages: ['g++-10', 'libboost-all-dev' ] 
+
 before_install:
   - eval "${MATRIX_EVAL}"
 
