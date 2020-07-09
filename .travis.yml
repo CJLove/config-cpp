@@ -74,7 +74,7 @@ before_install:
   # Install toml11
   - wget https://github.com/ToruNiina/toml11/archive/v3.4.0.tar.gz -O /tmp/toml11.tar.gz
   - tar zxf /tmp/toml11.tar.gz
-  - pushd toml11-* && mkdir build && cd build && cmake .. && sudo make install && popd
+  - pushd toml11-* && mkdir build && cd build && cmake -Dtoml11_BUILD_TEST=OFF .. && sudo make install && popd
 
 script:
   - mkdir build
