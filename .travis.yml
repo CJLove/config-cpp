@@ -21,7 +21,7 @@ matrix:
     addons:
       apt:
         sources: ['ubuntu-toolchain-r-test']
-        packages: ['g++-6' ]
+        packages: ['g++-6', 'libboost-all-dev' ]
 
   - os: linux
     compiler: gcc
@@ -30,7 +30,7 @@ matrix:
     addons:
       apt:
         sources: ['ubuntu-toolchain-r-test']
-        packages: ['g++-7' ]  
+        packages: ['g++-7', 'libboost-all-dev' ]  
 
   - os: linux
     compiler: gcc
@@ -39,7 +39,7 @@ matrix:
     addons:
       apt:
         sources: ['ubuntu-toolchain-r-test']
-        packages: ['g++-8' ] 
+        packages: ['g++-8', 'libboost-all-dev' ] 
 
 before_install:
   - eval "${MATRIX_EVAL}"
@@ -75,11 +75,11 @@ before_install:
   - wget https://github.com/ToruNiina/toml11/archive/v3.4.0.tar.gz -O /tmp/toml11.tar.gz
   - tar zxf /tmp/toml11.tar.gz
   - pushd toml11-* && mkdir build && cd build && cmake .. && sudo make install && popd
-  
+
 script:
   - mkdir build
   - cd build
-  - cmake -DBUILD_COVERAGE=ON -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON .. && make
+  - cmake -DBUILD_COVERAGE=ON -DYAML_SUPPORT=ON -DJSON_SUPPORT=ON -DTOML_SUPPORT=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. -DBUILD_TESTS=ON .. && make
   - ./test/ConfigCppTests
 
 after_success:
