@@ -9,4 +9,4 @@ inputs:
       
 run:
   path: ./config-cpp-git/ci/build.sh
-  args: [ "-builddir=build", "-cc=clang", "-cxx=clang++" ]   
+  args: [ "-builddir=build", "-cc=/usr/bin/clang", "-cxx=/usr/bin/clang++" ]   
