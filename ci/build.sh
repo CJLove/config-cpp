@@ -85,10 +85,10 @@ make
 ret=$?
 [ $ret -ne 0 ] && exit $ret
 
-[ ! -x ./tests/ConfigCppTests ] && { echo "ERROR: unit tests not built!"; exit 1; }
+[ ! -x ./test/ConfigCppTests ] && { echo "ERROR: unit tests not built!"; exit 1; }
 
 # Run unit tests
-./tests/ConfigCppTests
+./test/ConfigCppTests
 ret=$?
 
 # Return result
