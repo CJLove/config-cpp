@@ -1,0 +1,49 @@
+---
+resources:
+- name: config-cpp-git
+  type: git
+  icon: github
+  source:
+    uri: http://fir.love.io:3000/ChrisLove/config-cpp
+
+jobs:
+- name: set-pipeline
+  public: true
+  plan:
+  - get: config-cpp-git
+    trigger: true
+  - set_pipeline: config-cpp
+    file: config-cpp-git/ci/pipeline.yml
+- name: build-matrix
+  public: true
+  plan:  
+  - get: config-cpp-git
+    passed: [ set-pipeline ]
+    trigger: true
+  - in_parallel:
+    - task: gcc11_1_1
+      file: config-cpp-git/ci/gcc1111.yml
+    - task: gcc10_3_0
+      file: config-cpp-git/ci/gcc1030.yml
+    - task: gcc9_4_0
+      file: config-cpp-git/ci/gcc940.yml
+    - task: gcc8_4_0
+      file: config-cpp-git/ci/gcc840.yml
+    - task: gcc_7_4_0
+      file: config-cpp-git/ci/gcc740.yml
+    - task: gcc_6_5_0
+      file: config-cpp-git/ci/gcc650.yml
+
+- name: sanitizers
+  public: true
+  plan:
+  - get: config-cpp-git
+    passed: [ build-matrix ]
+    trigger: true
+  - in_parallel:
+    - task: asan
+      file: config-cpp-git/ci/asan.yml
+    - task: tsan
+      file: config-cpp-git/ci/tsan.yml
+
+        

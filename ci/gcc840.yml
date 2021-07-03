@@ -1,0 +1,12 @@
+---
+platform: linux
+image_resource:
+  type: registry-image
+  source: { repository: fir.love.io:3005/amd64/config-cpp-gcc840 }
+
+inputs:
+- name: config-cpp-git
+      
+run:
+  path: ./config-cpp-git/ci/build.sh
+  args: [ "-builddir=build", "-cc=/opt/gcc840/bin/gcc", "-cxx=/opt/gcc840/bin/g++" ]   
