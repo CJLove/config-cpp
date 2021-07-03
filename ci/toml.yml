@@ -9,4 +9,4 @@ inputs:
       
 run:
   path: ./config-cpp-git/ci/build.sh
-  args: [ "-builddir=build", "-cmake=\"-DYAML_SUPPORT=OFF -DJSON_SUPPORT=OFF -DTOML_SUPPORT=ON\"" ]   
+  args: [ "-builddir=toml", "-cmake=\"-DYAML_SUPPORT=OFF -DJSON_SUPPORT=OFF -DTOML_SUPPORT=ON\"" ]   

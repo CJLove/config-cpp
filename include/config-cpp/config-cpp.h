@@ -191,7 +191,7 @@ public:
      */
     template <typename T>
     bool UnmarshalToml(T &t) {
-#if defined(YAML_SUPPORT)
+#if defined(TOML_SUPPORT)
         switch (GetConfigType()) {
             case ConfigType::UNKNOWN:
                 return false;
