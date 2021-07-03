@@ -14,15 +14,40 @@ jobs:
     trigger: true
   - set_pipeline: config-cpp
     file: config-cpp-git/ci/pipeline.yml
-- name: build-matrix
+# Build using current gcc and clang and fail fast
+- name: build-current
   public: true
-  plan:  
+  plan:
   - get: config-cpp-git
     passed: [ set-pipeline ]
     trigger: true
   - in_parallel:
     - task: gcc11_1_1
       file: config-cpp-git/ci/gcc1111.yml
+    - task: clang
+      file: config-cpp-git/ci/clang.yml
+# Build different combinations of json/yaml/toml support
+- name: build-options
+  public: true
+  plan:
+  - get: config-cpp-git
+    passed: [ build-current ]
+    trigger: true
+  - in_parallel:
+    - task: yaml-only
+      file: config-cpp-git/ci/yaml.yml
+    - task: json-only
+      file: config-cpp-git/ci/json.yml
+    - task: toml-only
+      file: config-cpp-git/ci/toml.yml
+# Build using broader matrix of compilers
+- name: build-matrix
+  public: true
+  plan:  
+  - get: config-cpp-git
+    passed: [ build-options ]
+    trigger: true
+  - in_parallel:
     - task: gcc10_3_0
       file: config-cpp-git/ci/gcc1030.yml
     - task: gcc9_4_0
@@ -33,7 +58,7 @@ jobs:
       file: config-cpp-git/ci/gcc740.yml
     - task: gcc_6_5_0
       file: config-cpp-git/ci/gcc650.yml
-
+# Build and test using sanitizers
 - name: sanitizers
   public: true
   plan:
