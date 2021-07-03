@@ -75,7 +75,7 @@ if [ -n "$PARAM_CXX" -o -n "$PARAM_CC" ]; then
     # Override CC and CXX
     CC=$PARAM_CC CXX=$PARAM_CXX cmake $PARAM_CMAKE -DCMAKE_BUILD_TYPE=DEBUG -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=ON ..
 else
-    cmake $PARAM_CMAKE -Dconfig_CPP_BUILD_EXAMPLE=OFF -Dconfig_CPP_BUILD_TESTS=ON ..
+    cmake $PARAM_CMAKE -DBUILD_TESTS=ON ..
 fi
 ret=$?
 [ $ret -ne 0 ] && exit $ret

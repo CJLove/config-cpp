@@ -112,7 +112,7 @@ endif()
 
 if (YAML_SUPPORT)
     # yaml-cpp library dependency
-    find_package(yaml-cpp CONFIG REQUIRED)
+    find_package(yaml-cpp 0.6.2 REQUIRED)
 
     add_definitions(-DYAML_SUPPORT)
 endif(YAML_SUPPORT)
@@ -126,12 +126,12 @@ endif(JSON_SUPPORT)
 
 if (TOML_SUPPORT)
     # toml11 library dependency
-    find_package(toml11 REQUIRED)
+    find_package(toml11 3.4.0 REQUIRED)
 
     add_definitions(-DTOML_SUPPORT)
 endif(TOML_SUPPORT)
 
-find_package(cxxopts REQUIRED)
+find_package(cxxopts 1.2.0 REQUIRED)
 
 # Threads
 find_package(Threads)
