@@ -10,7 +10,7 @@ C++ Configuration library patterned after [`viper`](https://github.com/spf13/vip
 - unmarshalling configuration data to native C++ types where supported
 - setting defaults
 - TODO: reading from environment variables
-- TODO: reading from command line flags
+- reading from command line flags
 - live watching and re-reading of config files or Kubernetes ConfigMaps
 
 ConfigCpp uses the following precedence order.  Each item takes precedence over the item(s) below it:
