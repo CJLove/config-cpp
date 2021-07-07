@@ -70,7 +70,7 @@ before_install:
   - gem install coveralls-lcov
 
   # Install googletest
-  - wget https://github.com/google/googletest/archive/release-1.10.1.tar.gz -O /tmp/gtest.tar.gz
+  - wget https://github.com/google/googletest/archive/refs/tags/release-1.11.0.tar.gz -O /tmp/gtest.tar.gz
   - tar zxf /tmp/gtest.tar.gz
   - pushd googletest-* && mkdir build && cd build && cmake .. && sudo make install && popd
 
