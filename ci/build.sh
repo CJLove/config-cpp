@@ -97,7 +97,7 @@ ret=$?
 
 if [ $PARAM_COVER -eq 1 ]; then
     # Run SerfCppCoverage to get unit test report and code coverage info
-    make SerfCppCoverage
+    make ConfigCppCoverage
     ret=$?
     if [ $ret -eq 0 ]; then
         # Generate unit test html report and post to artstore
