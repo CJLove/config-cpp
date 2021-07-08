@@ -106,7 +106,7 @@ if [ $PARAM_COVER -eq 1 ]; then
         echo "Unit Test Report: http://fir.love.io:3004/dev/config-cpp/unit/"
 
         # Create code coverage tarball
-        cd SerfCppCoverage/ && tar zcf ../coverage.tar.gz . && cd -
+        cd ConfigCppCoverage/ && tar zcf ../coverage.tar.gz . && cd -
         curl -F item=@coverage.tar.gz http://fir.love.io:3004/artstore/config-cpp/coverage
         echo "Code Coverage: http://fir.love.io:3004/dev/config-cpp/coverage/"
     fi
