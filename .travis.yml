@@ -108,5 +108,5 @@ after_success:
   # - lcov --remove coverage.info 'tests/*' '/usr/*' --output-file coverage.info # filter out system and test code
   # - lcov --list coverage.info # debug before upload
   #- coveralls-lcov --repo-token ${COVERALLS_TOKEN} coverage.info # uploads to coveral
-  - coveralls --exclude lib --exclude tests --gcov-options "\-lp"
+  - coveralls -r .. -i src --exclude example --exclude test --gcov-options '\-lp'
 
