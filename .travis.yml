@@ -95,6 +95,7 @@ before_install:
   - pushd toml11-* && mkdir build && cd build && cmake -Dtoml11_BUILD_TEST=OFF .. && sudo make install && popd
 
   - pip install --user cpp-coveralls
+  - pip install --user gcovr
 
 script:
   - mkdir build
