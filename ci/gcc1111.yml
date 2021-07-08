@@ -9,4 +9,4 @@ inputs:
       
 run:
   path: ./config-cpp-git/ci/build.sh
-  args: [ "-builddir=build" ]   
+  args: [ "-builddir=build", "-cover" ]   

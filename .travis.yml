@@ -82,7 +82,7 @@ before_install:
   # Install yaml-cpp
   - wget https://github.com/jbeder/yaml-cpp/archive/yaml-cpp-0.6.3.tar.gz -O /tmp/yaml.tar.gz
   - tar zxf /tmp/yaml.tar.gz
-  - pushd yaml-* && mkdir build && cd build && cmake -DYAML_BUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DYAML_CPP_BUILD_TESTS=OFF .. && sudo make install && popd
+  - pushd yaml-* && mkdir build && cd build && cmake -DYAML_BUILD_SHARED_LIBS=ON -DYAML_CPP_BUILD_TESTS=OFF .. && sudo make install && popd
 
   # Install cxxopts
   - wget https://github.com/jarro2783/cxxopts/archive/v2.2.1.tar.gz -O /tmp/cxxopts.tar.gz
