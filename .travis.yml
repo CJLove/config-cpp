@@ -94,6 +94,8 @@ before_install:
   - tar zxf /tmp/toml11.tar.gz
   - pushd toml11-* && mkdir build && cd build && cmake -Dtoml11_BUILD_TEST=OFF .. && sudo make install && popd
 
+  - pip install --user cpp-coveralls
+
 script:
   - mkdir build
   - cd build
@@ -101,8 +103,9 @@ script:
   - ./test/ConfigCppTests
 
 after_success:
-  - lcov --directory . --capture --output-file coverage.info # capture coverage info
-  - lcov --remove coverage.info 'tests/*' '/usr/*' --output-file coverage.info # filter out system and test code
-  - lcov --list coverage.info # debug before upload
-  - coveralls-lcov --repo-token ${COVERALLS_TOKEN} coverage.info # uploads to coveral
+  # - lcov --directory . --capture --output-file coverage.info # capture coverage info
+  # - lcov --remove coverage.info 'tests/*' '/usr/*' --output-file coverage.info # filter out system and test code
+  # - lcov --list coverage.info # debug before upload
+  #- coveralls-lcov --repo-token ${COVERALLS_TOKEN} coverage.info # uploads to coveral
+  - coveralls --exclude lib --exclude tests --gcov-options "\-lp"
 
