@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <atomic>
 #include <cerrno>
 #include <chrono>
@@ -19,9 +20,9 @@
 #include "filesystemEvent.h"
 #include "notification.h"
 
-#define MAX_EVENTS 4096
-#define MAX_EPOLL_EVENTS 10
-#define EVENT_SIZE (sizeof(inotify_event))
+constexpr int MAX_EVENTS = 4096;
+constexpr int MAX_EPOLL_EVENTS = 10;
+constexpr size_t EVENT_SIZE = (sizeof(inotify_event));
 
 namespace ConfigCpp {
 
@@ -66,7 +67,6 @@ private:
     std::chrono::milliseconds m_eventTimeout;
     std::chrono::steady_clock::time_point m_lastEventTime;
     uint32_t m_eventMask;
-    uint32_t m_threadSleep = 250;
     std::queue<FileSystemEvent> m_eventQueue;
     std::map<int, std::string> m_directoryMap;
     std::map<std::string, int> m_watchMap;
@@ -75,13 +75,13 @@ private:
     int m_epollFd;
     epoll_event m_inotifyEpollEvent{};
     epoll_event m_stopPipeEpollEvent{};
-    epoll_event m_epollEvents[MAX_EPOLL_EVENTS]{};
+    std::array<epoll_event, MAX_EPOLL_EVENTS> m_epollEvents;
     std::thread m_thread;
 
     std::function<void(FileSystemEvent)> m_onEventTimeout;
     std::vector<uint8_t> m_eventBuffer;
 
-    int m_stopPipeFd[2]{0, 0};
+    std::array<int,2> m_stopPipeFd;
     const int m_pipeReadIdx = 0;
     const int m_pipeWriteIdx = 1;
 

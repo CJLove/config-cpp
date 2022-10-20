@@ -5,10 +5,11 @@
             "includePath": [
                 "${workspaceFolder}/include",
                 "${workspaceFolder}/src",
-                "${workspaceFolder}/example"
+                "${workspaceFolder}/example",
+                "/usr/local/include"
             ],
             "defines": [],
-            "compilerPath": "/usr/bin/clang",
+            "compilerPath": "/usr/bin/g++",
             "cStandard": "c11",
             "cppStandard": "c++14",
             "configurationProvider": "vector-of-bool.cmake-tools",

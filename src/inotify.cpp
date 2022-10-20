@@ -17,10 +17,11 @@ Inotify::Inotify()
     : m_eventTimeout(0)
     , m_lastEventTime(std::chrono::steady_clock::now())
     , m_eventMask(IN_ALL_EVENTS)
+    , m_epollEvents({})
     , m_onEventTimeout([](FileSystemEvent) {})
     , m_eventBuffer(MAX_EVENTS * (EVENT_SIZE + 16), 0)
 {
-    if (pipe2(static_cast<int*>(m_stopPipeFd), O_NONBLOCK) == -1) {
+    if (pipe2(static_cast<int*>(&m_stopPipeFd[0]), O_NONBLOCK) == -1) {
         m_error = errno;
         std::stringstream errorStream;
         errorStream << "Can't initialize stop pipe ! " << strerror(m_error) << ".";
@@ -223,7 +224,7 @@ ssize_t Inotify::readEventsIntoBuffer(std::vector<uint8_t>& eventBuffer)
     ssize_t length = 0;
     length = 0;
     auto timeout = -1;
-    auto nFdsReady = epoll_wait(m_epollFd, static_cast<epoll_event*>(m_epollEvents), MAX_EPOLL_EVENTS, timeout);
+    auto nFdsReady = epoll_wait(m_epollFd, static_cast<epoll_event*>(&m_epollEvents[0]), MAX_EPOLL_EVENTS, timeout);
 
     if (nFdsReady == -1) {
         return length;

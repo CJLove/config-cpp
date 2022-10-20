@@ -20,9 +20,9 @@
 #endif
 
 namespace ConfigCpp {
-#define CONFIG_CPP_VERSION_MAJOR 0
-#define CONFIG_CPP_VERSION_MINOR 1
-#define CONFIG_CPP_VERSION_PATCH 0
+constexpr uint32_t CONFIG_CPP_VERSION_MAJOR = 0;
+constexpr uint32_t CONFIG_CPP_VERSION_MINOR = 1;
+constexpr uint32_t CONFIG_CPP_VERSION_PATCH = 0;
 
 class ConfigCpp;
 
@@ -148,7 +148,6 @@ public:
             case ConfigType::YAML:
                 return YamlImpl::Unmarshal(t, GetConfigData());
             case ConfigType::JSON:
-                return false;
             case ConfigType::TOML:
                 return false;                
         }
@@ -169,14 +168,12 @@ public:
 #if defined(JSON_SUPPORT)
         switch (GetConfigType()) {
             case ConfigType::UNKNOWN:
-                return false;
             case ConfigType::YAML:
-                return false;
             case ConfigType::TOML:
                 return false;
             case ConfigType::JSON:
                 return JsonImpl::Unmarshal(t, GetConfigData());
-        }
+        }m_
 #endif
         return false;
     }
@@ -194,9 +191,7 @@ public:
 #if defined(TOML_SUPPORT)
         switch (GetConfigType()) {
             case ConfigType::UNKNOWN:
-                return false;
             case ConfigType::YAML:
-                return false;
             case ConfigType::JSON:
                 return false;
             case ConfigType::TOML:
