@@ -173,7 +173,7 @@ public:
                 return false;
             case ConfigType::JSON:
                 return JsonImpl::Unmarshal(t, GetConfigData());
-        }m_
+        }
 #endif
         return false;
     }
