@@ -18,13 +18,15 @@ Inotify::Inotify()
     , m_lastEventTime(std::chrono::steady_clock::now())
     , m_eventMask(IN_ALL_EVENTS)
     , m_epollEvents({})
-    , m_onEventTimeout([](FileSystemEvent) {})
-    , m_eventBuffer(MAX_EVENTS * (EVENT_SIZE + 16), 0)
+    , m_onEventTimeout([](const FileSystemEvent &) {})
+    , m_eventBuffer(MAX_EVENTS * (EVENT_SIZE + EVENT_PAD), 0)
 {
-    if (pipe2(static_cast<int*>(&m_stopPipeFd[0]), O_NONBLOCK) == -1) {
+    constexpr size_t ERR_BUF_SIZE = 256;
+    std::array<char,ERR_BUF_SIZE> errbuf {};
+    if (pipe2(static_cast<int*>(&m_stopPipeFd[0]), O_NONBLOCK | O_CLOEXEC) == -1) {
         m_error = errno;
         std::stringstream errorStream;
-        errorStream << "Can't initialize stop pipe ! " << strerror(m_error) << ".";
+        errorStream << "Can't initialize stop pipe ! " << strerror_r(m_error,errbuf.data(),errbuf.size()) << ".";
         throw std::runtime_error(errorStream.str());
     }
 
@@ -32,7 +34,7 @@ Inotify::Inotify()
     if (m_inotifyFd == -1) {
         m_error = errno;
         std::stringstream errorStream;
-        errorStream << "Can't initialize inotify ! " << strerror(m_error) << ".";
+        errorStream << "Can't initialize inotify ! " << strerror_r(m_error,errbuf.data(),errbuf.size()) << ".";
         throw std::runtime_error(errorStream.str());
     }
 
@@ -40,7 +42,7 @@ Inotify::Inotify()
     if (m_epollFd  == -1) {
         m_error = errno;
         std::stringstream errorStream;
-        errorStream << "Can't initialize epoll ! " << strerror(m_error) << ".";
+        errorStream << "Can't initialize epoll ! " << strerror_r(m_error,errbuf.data(),errbuf.size()) << ".";
         throw std::runtime_error(errorStream.str());
     }
 
@@ -49,7 +51,7 @@ Inotify::Inotify()
     if (epoll_ctl(m_epollFd, EPOLL_CTL_ADD, m_inotifyFd, &m_inotifyEpollEvent) == -1) {
         m_error = errno;
         std::stringstream errorStream;
-        errorStream << "Can't add inotify file descriptor to epoll ! " << strerror(m_error) << ".";
+        errorStream << "Can't add inotify file descriptor to epoll ! " << strerror_r(m_error,errbuf.data(),errbuf.size()) << ".";
         throw std::runtime_error(errorStream.str());
     }
 
@@ -58,7 +60,7 @@ Inotify::Inotify()
     if (epoll_ctl(m_epollFd, EPOLL_CTL_ADD, m_stopPipeFd[m_pipeReadIdx], &m_stopPipeEpollEvent) == -1) {
         m_error = errno;
         std::stringstream errorStream;
-        errorStream << "Can't add pipe filedescriptor to epoll ! " << strerror(m_error) << ".";
+        errorStream << "Can't add pipe filedescriptor to epoll ! " << strerror_r(m_error,errbuf.data(),errbuf.size()) << ".";
         throw std::runtime_error(errorStream.str());
     }
 }
@@ -78,6 +80,8 @@ Inotify::~Inotify()
 
 void Inotify::watchFile(const std::string &filePath)
 {
+    constexpr size_t ERR_BUF_SIZE = 256;
+    std::array<char,ERR_BUF_SIZE> errbuf {};
     if (exists(filePath)) {
         m_error = 0;
         int wd = 0;
@@ -86,14 +90,14 @@ void Inotify::watchFile(const std::string &filePath)
         if (wd == -1) {
             m_error = errno;
             std::stringstream errorStream;
-            if (m_error == 28) {
-                errorStream << "Failed to watch! " << strerror(m_error)
+            if (m_error == ENOSPC) {
+                errorStream << "Failed to watch! " << strerror_r(m_error,errbuf.data(),errbuf.size())
                             << ". Please increase number of watches in "
                                "\"/proc/sys/fs/inotify/max_user_watches\".";
                 throw std::runtime_error(errorStream.str());
             }
 
-            errorStream << "Failed to watch! " << strerror(m_error)
+            errorStream << "Failed to watch! " << strerror_r(m_error,errbuf.data(),errbuf.size())
                         << ". Path: " << filePath.c_str();
             throw std::runtime_error(errorStream.str());
         }

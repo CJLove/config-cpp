@@ -66,7 +66,7 @@ public:
      * @param name - configuration name, used as the basename for config files
      * @param path - initial search directory for config files
      */
-    ConfigCpp(int argc, char **argv, std::string name, std::string path);
+    ConfigCpp(int argc, char **argv, std::string &name, std::string &path);
 
     ConfigCpp(const ConfigCpp &rhs) = delete;
 

@@ -22,7 +22,8 @@
 
 constexpr int MAX_EVENTS = 4096;
 constexpr int MAX_EPOLL_EVENTS = 10;
-constexpr size_t EVENT_SIZE = (sizeof(inotify_event));
+constexpr ssize_t EVENT_SIZE = (sizeof(inotify_event));
+constexpr ssize_t EVENT_PAD = 16;
 
 namespace ConfigCpp {
 
@@ -81,7 +82,7 @@ private:
     std::function<void(FileSystemEvent)> m_onEventTimeout;
     std::vector<uint8_t> m_eventBuffer;
 
-    std::array<int,2> m_stopPipeFd;
+    std::array<int, 2> m_stopPipeFd{};
     const int m_pipeReadIdx = 0;
     const int m_pipeWriteIdx = 1;
 
