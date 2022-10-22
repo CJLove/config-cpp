@@ -4,8 +4,7 @@
 #include <string>
 
 namespace ConfigCpp {
-class FileSystemEvent {
-public:
+struct FileSystemEvent {
     FileSystemEvent() = default;
 
     FileSystemEvent(int wd, uint32_t mask, std::string path, const std::chrono::steady_clock::time_point &eventTime);
@@ -20,7 +19,6 @@ public:
 
     FileSystemEvent &operator=(FileSystemEvent &&rhs) = default;
 
-public:
     int m_wd = 0;
     uint32_t m_mask = 0;
     std::string m_path;

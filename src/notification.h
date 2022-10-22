@@ -5,11 +5,9 @@
 
 namespace ConfigCpp {
 
-class Notification {
-public:
+struct Notification {
     Notification(const Event& event, std::string path, std::chrono::steady_clock::time_point time);
 
-public:
     const Event m_event;
     const std::string m_path;
     const std::chrono::steady_clock::time_point m_time;

@@ -20,9 +20,9 @@
 #endif
 
 namespace ConfigCpp {
-#define CONFIG_CPP_VERSION_MAJOR 0
-#define CONFIG_CPP_VERSION_MINOR 1
-#define CONFIG_CPP_VERSION_PATCH 0
+constexpr uint32_t CONFIG_CPP_VERSION_MAJOR = 0;
+constexpr uint32_t CONFIG_CPP_VERSION_MINOR = 1;
+constexpr uint32_t CONFIG_CPP_VERSION_PATCH = 0;
 
 class ConfigCpp;
 
@@ -66,7 +66,7 @@ public:
      * @param name - configuration name, used as the basename for config files
      * @param path - initial search directory for config files
      */
-    ConfigCpp(int argc, char **argv, std::string name, std::string path);
+    ConfigCpp(int argc, char **argv, std::string &name, std::string &path);
 
     ConfigCpp(const ConfigCpp &rhs) = delete;
 
@@ -148,7 +148,6 @@ public:
             case ConfigType::YAML:
                 return YamlImpl::Unmarshal(t, GetConfigData());
             case ConfigType::JSON:
-                return false;
             case ConfigType::TOML:
                 return false;                
         }
@@ -169,9 +168,7 @@ public:
 #if defined(JSON_SUPPORT)
         switch (GetConfigType()) {
             case ConfigType::UNKNOWN:
-                return false;
             case ConfigType::YAML:
-                return false;
             case ConfigType::TOML:
                 return false;
             case ConfigType::JSON:
@@ -194,9 +191,7 @@ public:
 #if defined(TOML_SUPPORT)
         switch (GetConfigType()) {
             case ConfigType::UNKNOWN:
-                return false;
             case ConfigType::YAML:
-                return false;
             case ConfigType::JSON:
                 return false;
             case ConfigType::TOML:

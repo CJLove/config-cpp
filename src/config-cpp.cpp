@@ -48,7 +48,7 @@ struct ConfigCpp::st_impl {
     Values m_cmdLineArgs;
     bool m_cmdLineParsed;
 
-    void handleNotification(Notification notification);
+    void handleNotification(const Notification &notification);
     // void handleUnexpectedNotification(Notification notification);
 
     st_impl(ConfigCpp &config, int argc, char **argv)
@@ -84,7 +84,7 @@ struct ConfigCpp::st_impl {
     st_impl &operator=(st_impl &&rhs) noexcept = delete;
 };
 
-void ConfigCpp::st_impl::handleNotification(Notification notification) {
+void ConfigCpp::st_impl::handleNotification(const Notification &notification) {
     // std::cout << "Registered Event " << notification.m_event << " on " << notification.m_path << " at "
     //           << notification.m_time.time_since_epoch().count() << " was triggered\n";
 
@@ -107,8 +107,8 @@ void ConfigCpp::st_impl::handleNotification(Notification notification) {
 
 ConfigCpp::ConfigCpp(int argc, char **argv) : m_pImpl(std::make_unique<ConfigCpp::st_impl>(*this, argc, argv)) {}
 
-ConfigCpp::ConfigCpp(int argc, char **argv, std::string name, std::string path)
-    : m_pImpl(std::make_unique<ConfigCpp::st_impl>(*this, argc, argv, std::move(name), std::move(path))) {}
+ConfigCpp::ConfigCpp(int argc, char **argv, std::string &name, std::string &path)
+    : m_pImpl(std::make_unique<ConfigCpp::st_impl>(*this, argc, argv, name, std::move(path))) {}
 
 ConfigCpp::~ConfigCpp()
 {
@@ -132,7 +132,7 @@ void ConfigCpp::WatchConfig() {
         Event::close_write,
         Event::remove,
     };
-    auto handler = [this](Notification note) { this->m_pImpl->handleNotification(note); };
+    auto handler = [this](const Notification &note) { this->m_pImpl->handleNotification(note); };
 
     for (const auto &event : events) {
         // m_pImpl->m_inotify->setEventMask(m_pImpl->m_inotify->getEventMask() | static_cast<std::uint32_t>(event));
@@ -153,7 +153,7 @@ bool ConfigCpp::ReadInConfig() {
             auto result = m_pImpl->m_options.parse(m_pImpl->m_argc, m_pImpl->m_argv);
             if (result.count("help") != 0) {
                 std::cout << m_pImpl->m_options.help({""}) << std::endl;
-                exit(1);
+                return false;
             }
             auto args = result.arguments();
             for (const auto &arg : args) {
@@ -177,11 +177,11 @@ bool ConfigCpp::ReadInConfig() {
             // Exception from cxxopts parsing the arguments.  Output the error and usage.
             std::cout << "Error: " << e.what() << "\n";
             std::cout << m_pImpl->m_options.help({""}) << std::endl;
-            std::exit(1);
+            return false;
         } catch (std::exception &e) {
             // Anything else is in the subsequent processing of arguments
             std::cout << "Caught " << e.what() << "\n";
-            // TBD: return false?
+            return  false;
         }
     }
     static std::vector<std::string> yamlExtensions = {".yml", ".yaml"};
