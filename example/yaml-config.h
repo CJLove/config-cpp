@@ -38,25 +38,25 @@ struct convert<YamlConfig> {
 
     static bool decode(const Node &node, YamlConfig &rhs) {
 
-        if (node["top-string"] != nullptr) {
+        if (node["top-string"]) {
             try {
                 rhs.top_string = node["top-string"].as<std::string>();
             } catch (...) {
             }
         }
-        if (node["top-int"] != nullptr) {
+        if (node["top-int"]) {
             try {
                 rhs.top_int = node["top-int"].as<int>();
             } catch (...) {
             }
         }
-        if (node["top-bool"] != nullptr) {
+        if (node["top-bool"]) {
             try {
                 rhs.top_bool = node["top-bool"].as<bool>();
             } catch (...) {
             }
         }
-        if (node["top-list"] != nullptr) {
+        if (node["top-list"]) {
             try {
                 for (const auto &item : node["top-list"]) {
                     rhs.top_list.push_back(item.as<std::string>());
@@ -64,7 +64,7 @@ struct convert<YamlConfig> {
             } catch (...) {
             }
         }
-        if (node["top-dict"] != nullptr) {
+        if (node["top-dict"]) {
             try {
                 for (const auto &item : node["top-dict"]) {
                     rhs.top_dict[item.first.as<std::string>()] = item.second.as<std::string>();
@@ -72,7 +72,7 @@ struct convert<YamlConfig> {
             } catch (...) {
             }
         }
-        if (node["nested-list"] != nullptr) {
+        if (node["nested-list"]) {
             try {
                 for (const auto &item : node["nested-list"]) {
                     std::vector<std::string> l;
@@ -84,7 +84,7 @@ struct convert<YamlConfig> {
             } catch (...) {
             }
         }
-        if (node["nested-dict"] != nullptr) {
+        if (node["nested-dict"]) {
             try {
                 for (const auto &item : node["nested-dict"]) {
                     std::map<std::string, std::string> m;

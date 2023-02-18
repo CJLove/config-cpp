@@ -92,7 +92,7 @@ bool YamlHandler::GetNode(std::vector<std::string> &keys, const YAML::Node &cur,
         return true;
     }
     auto key = keys[0];
-    if (cur[key] != nullptr) {
+    if (cur[key]) {
         keys.erase(keys.begin());
         return GetNode(keys, cur[key], node);
     }
