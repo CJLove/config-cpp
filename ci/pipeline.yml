@@ -48,6 +48,8 @@ jobs:
     passed: [ build-options ]
     trigger: true
   - in_parallel:
+    - task: gcc12_2_1
+      file: config-cpp-git/ci/gcc1221.yml
     - task: gcc10_3_0
       file: config-cpp-git/ci/gcc1030.yml
     - task: gcc9_4_0

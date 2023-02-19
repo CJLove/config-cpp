@@ -32,7 +32,7 @@ namespace YAML {
 template <>
 struct convert<YamlConfig> {
     static Node encode(__attribute__((unused)) const YamlConfig &rhs) {
-        Node node;
+        const Node node;
         return node;
     }
 
