@@ -53,11 +53,15 @@ jobs:
           curl -sSL https://github.com/jarro2783/cxxopts/archive/v2.2.1.tar.gz -o /tmp/cxxopts.tar.gz
           tar zxf /tmp/cxxopts.tar.gz
           pushd cxxopts-* && mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && make install && popd
-          curl -sSL https://github.com/ToruNiina/toml11/archive/v3.7.1.tar.gz -o /tmp/toml11.tar.gz
           # Install toml11
+          curl -sSL https://github.com/ToruNiina/toml11/archive/v3.7.1.tar.gz -o /tmp/toml11.tar.gz
           tar zxf /tmp/toml11.tar.gz
           pushd toml11-* && mkdir build && cd build && cmake -Dtoml11_BUILD_TEST=OFF .. && make install && popd
-
+          # Install googletest
+          curl -sSL https://github.com/google/googletest/archive/refs/tags/v1.13.0.tar.gz -o /tmp/googletest.tar.gz
+          tar zxf /tmp/googletest.tar.gz
+          pushd googletest-* && mkdir build && cd build && cmake .. && make install && popd
+          
       - name: Build
         run: |
           mkdir -p build && cd build
