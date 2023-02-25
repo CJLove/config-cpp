@@ -11,7 +11,8 @@ jobs:
     strategy:
       matrix:
         config:
-          - { compiler: gcc, version: 8, build_type: Release, cppstd: 14 }
+          - { compiler: gcc, version: 8, build_type: Release, cppstd: 14, examples: ON }
+          - { compiler: gcc, version: 9, build_type: Release, cppstd: 14, examples: OFF }
 #          - { compiler: gcc, version: 11, build_type: Debug, cppstd: 20 }
 #          - { compiler: gcc, version: 12, build_type: Release, cppstd: 20 }
 #          - { compiler: clang, version: 10, build_type: Release, cppstd: 14 }
@@ -65,10 +66,11 @@ jobs:
       - name: Build
         run: |
           mkdir -p build && cd build
+          export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
           cmake .. \
             -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} \
             -DCMAKE_CXX_STANDARD=${{ matrix.config.cppstd }} \
-            -DBUILD_EXAMPLES=${{ matrix.config.examples || 'ON' }} \
+            -DBUILD_EXAMPLES=${{ matrix.config.example }} \
             -DYAML_SUPPORT=ON \
             -DJSON_SUPPORT=ON \
             -DTOML_SUPPORT=ON \
