@@ -1,5 +1,4 @@
-[![Build Status](https://travis-ci.com/CJLove/config-cpp.svg?branch=master)](https://travis-ci.com/CJLove/config-cpp)
-[![Coverage Status](https://coveralls.io/repos/github/CJLove/config-cpp/badge.svg?branch=master)](https://coveralls.io/github/CJLove/config-cpp?branch=master)
+[![ci](https://github.com/CJLove/config-cpp/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/CJLove/config-cpp/actions/workflows/ci.yml)
 ![CodeQL](https://github.com/CJLove/config-cpp/workflows/CodeQL/badge.svg)
 
 
