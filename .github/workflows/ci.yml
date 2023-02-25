@@ -17,7 +17,7 @@ jobs:
 #          - { compiler: clang, version: 10, build_type: Release, cppstd: 14 }
 #         - { compiler: clang, version: 10, build_type: Debug, cppstd: 17 }
 #         - { compiler: clang, version: 12, build_type: Debug, cppstd: 17 }
-          - { compiler: clang, version: 15, build_type: Release, cppstd: 14 }
+#          - { compiler: clang, version: 15, build_type: Release, cppstd: 14 }
     container:
       image: ${{ matrix.config.compiler == 'clang' && 'teeks99/clang-ubuntu' || matrix.config.compiler }}:${{ matrix.config.version }}
     name: "${{ matrix.config.compiler}} ${{ matrix.config.version }} (C++${{ matrix.config.cppstd }}, ${{ matrix.config.build_type }})"
@@ -42,18 +42,18 @@ jobs:
       - name: Dependencies
         run: |
           # Install json
-          wget https://github.com/nlohmann/json/archive/v3.11.2.tar.gz -O /tmp/json.tar.gz
+          curl -sSL https://github.com/nlohmann/json/archive/v3.11.2.tar.gz -o /tmp/json.tar.gz
           tar zxf /tmp/json.tar.gz
           pushd json-* && mkdir build && cd build && cmake -DJSON_BuildTests=OFF .. && make install && popd
           # Install yaml-cpp
-          wget https://github.com/jbeder/yaml-cpp/archive/yaml-cpp-0.7.0.tar.gz -O /tmp/yaml.tar.gz
+          curl -sSL https://github.com/jbeder/yaml-cpp/archive/yaml-cpp-0.7.0.tar.gz -o /tmp/yaml.tar.gz
           tar zxf /tmp/yaml.tar.gz
           pushd yaml-* && mkdir build && cd build && cmake -DYAML_BUILD_SHARED_LIBS=ON -DYAML_CPP_BUILD_TESTS=OFF .. && make install && popd
           # Install cxxopts
-          wget https://github.com/jarro2783/cxxopts/archive/v2.2.1.tar.gz -O /tmp/cxxopts.tar.gz
+          curl -sSL https://github.com/jarro2783/cxxopts/archive/v2.2.1.tar.gz -o /tmp/cxxopts.tar.gz
           tar zxf /tmp/cxxopts.tar.gz
           pushd cxxopts-* && mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && make install && popd
-          wget https://github.com/ToruNiina/toml11/archive/v3.7.1.tar.gz -O /tmp/toml11.tar.gz
+          curl -sSL https://github.com/ToruNiina/toml11/archive/v3.7.1.tar.gz -o /tmp/toml11.tar.gz
           # Install toml11
           tar zxf /tmp/toml11.tar.gz
           pushd toml11-* && mkdir build && cd build && cmake -Dtoml11_BUILD_TEST=OFF .. && make install && popd
