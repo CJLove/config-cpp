@@ -13,10 +13,11 @@ jobs:
         config:
           - { compiler: gcc, version: 8, build_type: Release, cppstd: 14, examples: ON }
           - { compiler: gcc, version: 9, build_type: Release, cppstd: 17, examples: OFF }
-#          - { compiler: gcc, version: 11, build_type: Debug, cppstd: 20 }
-#          - { compiler: gcc, version: 12, build_type: Release, cppstd: 20 }
-#          - { compiler: clang, version: 10, build_type: Release, cppstd: 14 }
-#         - { compiler: clang, version: 10, build_type: Debug, cppstd: 17 }
+          - { compiler: gcc, version: 10, build_type: Debug, cppstd: 20, examples: ON }
+          - { compiler: gcc, version: 11, build_type: Debug, cppstd: 20, examples: OFF }
+          - { compiler: gcc, version: 12, build_type: Release, cppstd: 20, examples: ON }
+          - { compiler: clang, version: 10, build_type: Release, cppstd: 14, examples: OFF }
+          - { compiler: clang, version: 10, build_type: Debug, cppstd: 17, examples: ON }
           - { compiler: clang, version: 12, build_type: Debug, cppstd: 17, examples: OFF }
           - { compiler: clang, version: 15, build_type: Release, cppstd: 14, examples: ON }
     container:
