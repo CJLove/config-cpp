@@ -2,11 +2,11 @@
 platform: linux
 image_resource:
   type: registry-image
-  source: { repository: fir.love.io:3005/amd64/config-cpp-gcc1111 }
+  source: { repository: fir.love.io:3005/amd64/config-cpp-gcc1311 }
 
 inputs:
 - name: config-cpp-git
       
 run:
   path: ./config-cpp-git/ci/build.sh
-  args: [ "-builddir=asan", "-cmake=\"-DCMAKE_BUILD_TYPE=asan\"" ]   
+  args: [ "-builddir=asan", "--cmake=-DCMAKE_BUILD_TYPE=asan" ]   

@@ -2,7 +2,7 @@
 platform: linux
 image_resource:
   type: registry-image
-  source: { repository: fir.love.io:3005/amd64/config-cpp-gcc1111 }
+  source: { repository: fir.love.io:3005/amd64/config-cpp-gcc1311 }
 
 inputs:
 - name: config-cpp-git
