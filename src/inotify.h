@@ -83,8 +83,7 @@ private:
     std::vector<uint8_t> m_eventBuffer;
 
     std::array<int, 2> m_stopPipeFd{};
-    const int m_pipeReadIdx = 0;
-    const int m_pipeWriteIdx = 1;
+
 
     std::map<Event, EventObserver> m_eventObserver;
     EventObserver m_unexpectedEventObserver;

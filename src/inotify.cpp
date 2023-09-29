@@ -13,6 +13,9 @@
 
 namespace ConfigCpp {
 
+static constexpr int PIPE_READ_INDEX = 0;
+static constexpr int PIPE_WRITE_INDEX = 1;
+
 Inotify::Inotify()
     : m_eventTimeout(0)
     , m_lastEventTime(std::chrono::steady_clock::now())
@@ -56,8 +59,8 @@ Inotify::Inotify()
     }
 
     m_stopPipeEpollEvent.events = EPOLLIN | EPOLLET;
-    m_stopPipeEpollEvent.data.fd = m_stopPipeFd[m_pipeReadIdx];
-    if (epoll_ctl(m_epollFd, EPOLL_CTL_ADD, m_stopPipeFd[m_pipeReadIdx], &m_stopPipeEpollEvent) == -1) {
+    m_stopPipeEpollEvent.data.fd = m_stopPipeFd[PIPE_READ_INDEX];
+    if (epoll_ctl(m_epollFd, EPOLL_CTL_ADD, m_stopPipeFd[PIPE_READ_INDEX], &m_stopPipeEpollEvent) == -1) {
         m_error = errno;
         std::stringstream errorStream;
         errorStream << "Can't add pipe filedescriptor to epoll ! " << strerror_r(m_error,errbuf.data(),errbuf.size()) << ".";
@@ -70,12 +73,12 @@ Inotify::~Inotify()
     stop();
     
     epoll_ctl(m_epollFd, EPOLL_CTL_DEL, m_inotifyFd, nullptr);
-    epoll_ctl(m_epollFd, EPOLL_CTL_DEL, m_stopPipeFd[m_pipeReadIdx], nullptr);
+    epoll_ctl(m_epollFd, EPOLL_CTL_DEL, m_stopPipeFd[PIPE_READ_INDEX], nullptr);
 
     close(m_inotifyFd);
     close(m_epollFd);
-    close(m_stopPipeFd[m_pipeReadIdx]);
-    close(m_stopPipeFd[m_pipeWriteIdx]);
+    close(m_stopPipeFd[PIPE_READ_INDEX]);
+    close(m_stopPipeFd[PIPE_WRITE_INDEX]);
 }
 
 void Inotify::watchFile(const std::string &filePath)
@@ -187,7 +190,7 @@ void Inotify::run()
         auto currentEvent = static_cast<Event>(fileSystemEvent.m_mask);
         bool dispatched = false;
 
-        Notification notification { currentEvent, fileSystemEvent.m_path, fileSystemEvent.m_eventTime };
+        const Notification notification { currentEvent, fileSystemEvent.m_path, fileSystemEvent.m_eventTime };
 
         for (auto& eventAndEventObserver : m_eventObserver) {
             auto& event = eventAndEventObserver.first;
@@ -210,7 +213,7 @@ void Inotify::run()
 void Inotify::sendStopSignal()
 {
     std::vector<std::uint8_t> buf(1,0);
-    write(m_stopPipeFd[m_pipeWriteIdx], buf.data(), buf.size());
+    write(m_stopPipeFd[PIPE_WRITE_INDEX], buf.data(), buf.size());
 }
 
 bool Inotify::hasStopped()
@@ -235,7 +238,7 @@ ssize_t Inotify::readEventsIntoBuffer(std::vector<uint8_t>& eventBuffer)
     }
 
     for (auto n = 0; n < nFdsReady; ++n) {
-        if (m_epollEvents[n].data.fd == m_stopPipeFd[m_pipeReadIdx]) {
+        if (m_epollEvents[n].data.fd == m_stopPipeFd[PIPE_READ_INDEX]) {
             break;
         }
 
@@ -273,7 +276,7 @@ void Inotify::readEventsFromBuffer(
         path += std::string(static_cast<char*>(event->name),event->len);
         }
 
-        FileSystemEvent fsEvent(event->wd, event->mask, path, std::chrono::steady_clock::now());
+        const FileSystemEvent fsEvent(event->wd, event->mask, path, std::chrono::steady_clock::now());
 
         if (!fsEvent.m_path.empty()) {
             events.push_back(fsEvent);
@@ -290,7 +293,7 @@ void Inotify::filterEvents(
     std::vector<FileSystemEvent>& events, std::queue<FileSystemEvent>& eventQueue)
 {
     for (auto eventIt = events.begin(); eventIt < events.end();) {
-        FileSystemEvent currentEvent = *eventIt;
+        const FileSystemEvent currentEvent = *eventIt;
         if (isOnTimeout(currentEvent.m_eventTime)) {
             eventIt = events.erase(eventIt);
             m_onEventTimeout(currentEvent);

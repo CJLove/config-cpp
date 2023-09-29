@@ -32,7 +32,7 @@ namespace ConfigCpp {
  * @brief Private implementation struct
  */
 struct ConfigCpp::st_impl {
-    ConfigCpp &m_config;
+    ConfigCpp &m_config; // NOLINT
     int m_argc;
     char **m_argv;
     std::string m_name;
@@ -159,21 +159,21 @@ bool ConfigCpp::ReadInConfig() {
             for (const auto &arg : args) {
                 switch (m_pImpl->m_optionTypes[arg.key()]) {
                     case Value::ValueType::BOOL:
-                        m_pImpl->m_cmdLineArgs.push_back(Value(arg.key(), arg.as<bool>()));
+                        m_pImpl->m_cmdLineArgs.emplace_back(arg.key(), arg.as<bool>());
                         break;
                     case Value::ValueType::INT:
-                        m_pImpl->m_cmdLineArgs.push_back(Value(arg.key(), arg.as<int>()));
+                        m_pImpl->m_cmdLineArgs.emplace_back(arg.key(), arg.as<int>());
                         break;
                     case Value::ValueType::STRING:
-                        m_pImpl->m_cmdLineArgs.push_back(Value(arg.key(), arg.as<std::string>()));
+                        m_pImpl->m_cmdLineArgs.emplace_back(arg.key(), arg.as<std::string>());
                         break;
                     case Value::ValueType::DOUBLE:
-                        m_pImpl->m_cmdLineArgs.push_back(Value(arg.key(), arg.as<double>()));
+                        m_pImpl->m_cmdLineArgs.emplace_back(arg.key(), arg.as<double>());
                         break;
                 }
             }
             m_pImpl->m_cmdLineParsed = true;
-        } catch (cxxopts::OptionParseException &e) {
+        } catch (cxxopts::exceptions::exception &e) {
             // Exception from cxxopts parsing the arguments.  Output the error and usage.
             std::cout << "Error: " << e.what() << "\n";
             std::cout << m_pImpl->m_options.help({""}) << std::endl;
@@ -184,16 +184,16 @@ bool ConfigCpp::ReadInConfig() {
             return  false;
         }
     }
-    static std::vector<std::string> yamlExtensions = {".yml", ".yaml"};
-    static std::vector<std::string> jsonExtensions = {".json"};
-    static std::vector<std::string> tomlExtensions = {".toml"};
+    const static std::vector<std::string> yamlExtensions = {".yml", ".yaml"};
+    const static std::vector<std::string> jsonExtensions = {".json"};
+    const static std::vector<std::string> tomlExtensions = {".toml"};
 
     for (const auto &path : m_pImpl->m_path) {
         auto name = path + m_pImpl->m_name;
 #if defined(YAML_SUPPORT)
         if (m_pImpl->m_type == ConfigType::UNKNOWN || m_pImpl->m_type == ConfigType::YAML) {
             for (const auto &ext : yamlExtensions) {
-                std::ifstream file(name + ext);
+                const std::ifstream file(name + ext);
                 if (file.good()) {
                     try {
                         std::stringstream stream;
@@ -212,7 +212,7 @@ bool ConfigCpp::ReadInConfig() {
 #if defined(JSON_SUPPORT)
         if (m_pImpl->m_type == ConfigType::UNKNOWN || m_pImpl->m_type == ConfigType::JSON) {
             for (const auto &ext : jsonExtensions) {
-                std::ifstream file(name + ext);
+                const std::ifstream file(name + ext);
                 if (file.good()) {
                     try {
                         std::stringstream stream;
@@ -231,7 +231,7 @@ bool ConfigCpp::ReadInConfig() {
 #if defined(TOML_SUPPORT)
         if (m_pImpl->m_type == ConfigType::UNKNOWN || m_pImpl->m_type == ConfigType::TOML) {
             for (const auto &ext : tomlExtensions) {
-                std::ifstream file(name + ext);
+                const std::ifstream file(name + ext);
                 if (file.good()) {
                     try {
                         std::stringstream stream;
@@ -298,35 +298,35 @@ std::string ConfigCpp::GetString(const std::string &key) const {
 
 void ConfigCpp::SetDefault(const std::string &key, const bool &boolVal) {
     if (m_pImpl) {
-        Value def(key, boolVal);
+        const Value def(key, boolVal);
         m_pImpl->m_defaults.push_back(def);
     }
 }
 
 void ConfigCpp::SetDefault(const std::string &key, const int &intVal) {
     if (m_pImpl) {
-        Value def(key, intVal);
+        const Value def(key, intVal);
         m_pImpl->m_defaults.push_back(def);
     }
 }
 
 void ConfigCpp::SetDefault(const std::string &key, const double &doubleVal) {
     if (m_pImpl) {
-        Value def(key, doubleVal);
+        const Value def(key, doubleVal);
         m_pImpl->m_defaults.push_back(def);
     }
 }
 
 void ConfigCpp::SetDefault(const std::string &key, const char *stringVal) {
     if (m_pImpl) {
-        Value def(key, std::string(stringVal));
+        const Value def(key, std::string(stringVal));
         m_pImpl->m_defaults.push_back(def);
     }
 }
 
 void ConfigCpp::SetDefault(const std::string &key, const std::string &stringVal) {
     if (m_pImpl) {
-        Value def(key, stringVal);
+        const Value def(key, stringVal);
         m_pImpl->m_defaults.push_back(def);
     }
 }

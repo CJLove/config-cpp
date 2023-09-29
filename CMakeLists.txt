@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.17)
 
 project(config-cpp)
 
@@ -131,7 +131,7 @@ if (TOML_SUPPORT)
     add_definitions(-DTOML_SUPPORT)
 endif(TOML_SUPPORT)
 
-find_package(cxxopts 2.0.0 REQUIRED)
+find_package(cxxopts 3.1.0 REQUIRED)
 
 # Threads
 find_package(Threads)
