@@ -25,7 +25,7 @@ ConfigCpp uses the following precedence order.  Each item takes precedence over 
 - C++14-capable compiler
 - GoogleTest (unit testing)
 - CMake
-- cxxopts (https://github.com/jarro2783/cxxopts) version 3.1.0 or later
+- cxxopts (https://github.com/jarro2783/cxxopts) version 3.1.1 or later
 
 Also one or more of the following:
 - Json for Modern C++ (https://github.com/nlohmann/json)

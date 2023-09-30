@@ -131,7 +131,7 @@ if (TOML_SUPPORT)
     add_definitions(-DTOML_SUPPORT)
 endif(TOML_SUPPORT)
 
-find_package(cxxopts 3.1.0 REQUIRED)
+find_package(cxxopts 3.1.1 REQUIRED)
 
 # Threads
 find_package(Threads)
