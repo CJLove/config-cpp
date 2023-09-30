@@ -54,7 +54,7 @@ jobs:
           # Install cxxopts
           curl -sSL https://github.com/jarro2783/cxxopts/archive/v3.1.1.tar.gz -o /tmp/cxxopts.tar.gz
           tar zxf /tmp/cxxopts.tar.gz
-          pushd cxxopts-* && mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && make install && popd
+          pushd cxxopts-* && mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release -DCXXOPTS_BUILD_EXAMPLES=OFF -DCXXOPTS_BUILD_TESTS=OFF .. && make install && popd
           # Install toml11
           curl -sSL https://github.com/ToruNiina/toml11/archive/v3.7.1.tar.gz -o /tmp/toml11.tar.gz
           tar zxf /tmp/toml11.tar.gz
