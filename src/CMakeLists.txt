@@ -14,7 +14,6 @@ endif (BUILD_COVERAGE)
 
 set (config-cpp_SRC
     config-cpp.cpp
-    jsonHandler.cpp
     util.cpp
     value.cpp
     event.cpp
