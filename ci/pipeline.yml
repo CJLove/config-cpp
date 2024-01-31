@@ -4,7 +4,7 @@ resources:
   type: git
   icon: github
   source:
-    uri: https://fir.love.io:3000/CJLove/config-cpp
+    uri: http://fir.love.io:3000/CJLove/config-cpp
 
 jobs:
 - name: set-pipeline
