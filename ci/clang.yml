@@ -8,5 +8,5 @@ inputs:
 - name: config-cpp-git
       
 run:
-  path: ./config-cpp-git/ci/build.sh
-  args: [ "-builddir=build", "-cc=/usr/bin/clang", "-cxx=/usr/bin/clang++" ]   
+  path: ./config-cpp-git/build.sh
+  args: [ "-concourse", "-builddir=build", "-cc=/usr/bin/clang", "-cxx=/usr/bin/clang++" ]   

@@ -8,5 +8,5 @@ inputs:
 - name: config-cpp-git
       
 run:
-  path: ./config-cpp-git/ci/build.sh
-  args: [ "-builddir=build", "-cc=/opt/gcc1230/bin/gcc", "-cxx=/opt/gcc1230/bin/g++" ]   
+  path: ./config-cpp-git/build.sh
+  args: [ "-concourse", "-builddir=build", "-cc=/opt/gcc1230/bin/gcc", "-cxx=/opt/gcc1230/bin/g++" ]   

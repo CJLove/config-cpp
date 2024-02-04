@@ -8,5 +8,5 @@ inputs:
 - name: config-cpp-git
       
 run:
-  path: ./config-cpp-git/ci/build.sh
-  args: [ "-builddir=toml", "-cmake=\"-DYAML_SUPPORT=OFF -DJSON_SUPPORT=OFF -DTOML_SUPPORT=ON\"" ]   
+  path: ./config-cpp-git/build.sh
+  args: [ "-concourse", "-builddir=toml", "-cmake=\"-DYAML_SUPPORT=OFF -DJSON_SUPPORT=OFF -DTOML_SUPPORT=ON\"" ]   
