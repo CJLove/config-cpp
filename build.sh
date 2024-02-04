@@ -104,7 +104,7 @@ ret=$?
 [ $ret -ne 0 ] && exit $ret
 
 if [ $PARAM_COVER -eq 1 ]; then
-    # Run SerfCppCoverage to get unit test report and code coverage info
+    # Run CofigCppCoverage to get unit test report and code coverage info
     make ConfigCppCoverage
     ret=$?
     if [ $ret -eq 0 ]; then

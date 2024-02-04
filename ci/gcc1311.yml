@@ -9,4 +9,4 @@ inputs:
       
 run:
   path: ./config-cpp-git/build.sh
-  args: [ "-concourse", "-builddir=build", "-cover" ]   
+  args: [ "-concourse", "-builddir=build" ]   
