@@ -16,10 +16,19 @@ jobs:
           - { compiler: gcc, version: 10, build_type: Debug, cppstd: 20, examples: ON }
           - { compiler: gcc, version: 11, build_type: Debug, cppstd: 20, examples: OFF }
           - { compiler: gcc, version: 12, build_type: Release, cppstd: 20, examples: ON }
+          - { compiler: gcc, version: 13, build_type: Release, cppstd: 20, examples: OFF }
+          - { compiler: gcc, version: 14, build_type: Release, cppstd: 20, examples: ON }
           - { compiler: clang, version: 11, build_type: Release, cppstd: 14, examples: OFF }
           - { compiler: clang, version: 11, build_type: Debug, cppstd: 17, examples: ON }
           - { compiler: clang, version: 12, build_type: Debug, cppstd: 17, examples: OFF }
-          - { compiler: clang, version: 15, build_type: Release, cppstd: 14, examples: ON }
+          - { compiler: clang, version: 13, build_type: Debug, cppstd: 17, examples: OFF }
+          - { compiler: clang, version: 14, build_type: Debug, cppstd: 17, examples: OFF }
+          - { compiler: clang, version: 15, build_type: Release, cppstd: 20, examples: ON }
+          - { compiler: clang, version: 16, build_type: Release, cppstd: 20, examples: OFF }
+          - { compiler: clang, version: 17, build_type: Release, cppstd: 20, examples: ON }
+          - { compiler: clang, version: 18, build_type: Release, cppstd: 20, examples: OFF }
+          - { compiler: clang, version: 19, build_type: Release, cppstd: 20, examples: ON }
+          - { compiler: clang, version: 20, build_type: Release, cppstd: 20, examples: OFF }
     container:
       image: ${{ matrix.config.compiler == 'clang' && 'teeks99/clang-ubuntu' || matrix.config.compiler }}:${{ matrix.config.version }}
     name: "${{ matrix.config.compiler}} ${{ matrix.config.version }} (C++${{ matrix.config.cppstd }}, ${{ matrix.config.build_type }})"
