@@ -16,22 +16,23 @@ jobs:
       max-parallel: 4
       matrix:
         config:
-          - { name: g++14, image: fir.love.io:3005/amd64/config-cpp-gcc1421, cc: /usr/bin/gcc, cxx: /usr/bin/g++, build_type: Debug, cppstd: 17, yaml: ON, toml: ON, json: ON }
-          - { name: g++14, image: fir.love.io:3005/amd64/config-cpp-gcc1421, cc: /usr/bin/gcc, cxx: /usr/bin/g++, build_type: Release, cppstd: 17, yaml: ON, toml: ON, json: ON }
-          - { name: yaml, image: fir.love.io:3005/amd64/config-cpp-gcc1421, cc: /usr/bin/gcc, cxx: /usr/bin/g++, build_type: Release, cppstd: 17, yaml: ON, toml: OFF, json: OFF } 
-          - { name: toml, image: fir.love.io:3005/amd64/config-cpp-gcc1421, cc: /usr/bin/gcc, cxx: /usr/bin/g++, build_type: Release, cppstd: 17, yaml: OFF, toml: ON, json: OFF } 
-          - { name: json, image: fir.love.io:3005/amd64/config-cpp-gcc1421, cc: /usr/bin/gcc, cxx: /usr/bin/g++, build_type: Release, cppstd: 17, yaml: OFF, toml: OFF, json: ON } 
-          - { name: clang16, image: fir.love.io:3005/amd64/config-cpp-gcc1421, cc: /usr/bin/clang, cxx: /usr/bin/clang++, build_type: Debug, cppstd: 17, yaml: ON, toml: ON, json: ON }
-          - { name: clang16, image: fir.love.io:3005/amd64/config-cpp-gcc1421, cc: /usr/bin/clang, cxx: /usr/bin/clang++, build_type: Release, cppstd: 17, yaml: ON, toml: ON, json: ON }
-          - { name: asan, image: fir.love.io:3005/amd64/config-cpp-gcc1421, cc: /usr/bin/gcc, cxx: /usr/bin/g++, build_type: asan, cppstd: 17, yaml: ON, toml: ON, json: ON }
-          - { name: tsan, image: fir.love.io:3005/amd64/config-cpp-gcc1421, cc: /usr/bin/gcc, cxx: /usr/bin/g++, build_type: tsan, cppstd: 17, yaml: ON, toml: ON, json: ON }
-          - { name: ubsan, image: fir.love.io:3005/amd64/config-cpp-gcc1421, cc: /usr/bin/gcc, cxx: /usr/bin/g++, build_type: ubsan, cppstd: 17, yaml: ON, toml: ON, json: ON }
+          - { name: g++15, image: fir.love.io:3005/amd64/config-cpp-gcc1511, cc: /usr/bin/gcc, cxx: /usr/bin/g++, build_type: Debug, cppstd: 17, yaml: ON, toml: ON, json: ON }
+          - { name: g++15, image: fir.love.io:3005/amd64/config-cpp-gcc1511, cc: /usr/bin/gcc, cxx: /usr/bin/g++, build_type: Release, cppstd: 17, yaml: ON, toml: ON, json: ON }
+          - { name: yaml, image: fir.love.io:3005/amd64/config-cpp-gcc1511, cc: /usr/bin/gcc, cxx: /usr/bin/g++, build_type: Release, cppstd: 17, yaml: ON, toml: OFF, json: OFF } 
+          - { name: toml, image: fir.love.io:3005/amd64/config-cpp-gcc1511, cc: /usr/bin/gcc, cxx: /usr/bin/g++, build_type: Release, cppstd: 17, yaml: OFF, toml: ON, json: OFF } 
+          - { name: json, image: fir.love.io:3005/amd64/config-cpp-gcc1511, cc: /usr/bin/gcc, cxx: /usr/bin/g++, build_type: Release, cppstd: 17, yaml: OFF, toml: OFF, json: ON } 
+          - { name: clang16, image: fir.love.io:3005/amd64/config-cpp-gcc1511, cc: /usr/bin/clang, cxx: /usr/bin/clang++, build_type: Debug, cppstd: 17, yaml: ON, toml: ON, json: ON }
+          - { name: clang16, image: fir.love.io:3005/amd64/config-cpp-gcc1511, cc: /usr/bin/clang, cxx: /usr/bin/clang++, build_type: Release, cppstd: 17, yaml: ON, toml: ON, json: ON }
+          - { name: asan, image: fir.love.io:3005/amd64/config-cpp-gcc1511, cc: /usr/bin/gcc, cxx: /usr/bin/g++, build_type: asan, cppstd: 17, yaml: ON, toml: ON, json: ON }
+          - { name: tsan, image: fir.love.io:3005/amd64/config-cpp-gcc1511, cc: /usr/bin/gcc, cxx: /usr/bin/g++, build_type: tsan, cppstd: 17, yaml: ON, toml: ON, json: ON }
+          - { name: ubsan, image: fir.love.io:3005/amd64/config-cpp-gcc1511, cc: /usr/bin/gcc, cxx: /usr/bin/g++, build_type: ubsan, cppstd: 17, yaml: ON, toml: ON, json: ON }
           - { name: g++8.4.0, image: fir.love.io:3005/amd64/config-cpp-gcc840, cc: /opt/gcc840/bin/gcc, cxx: /opt/gcc840/bin/g++, build_type: Debug, cppstd: 14, yaml: ON, toml: ON, json: ON }
           - { name: g++8.4.0, image: fir.love.io:3005/amd64/config-cpp-gcc840, cc: /opt/gcc840/bin/gcc, cxx: /opt/gcc840/bin/g++, build_type: Debug, cppstd: 14, yaml: ON, toml: ON, json: ON }
           - { name: g++10.3.0, image: fir.love.io:3005/amd64/config-cpp-gcc1030, cc: /opt/gcc1030/bin/gcc, cxx: /opt/gcc1030/bin/g++, build_type: Debug, cppstd: 14, yaml: ON, toml: ON, json: ON }
           - { name: g++11.3.0, image: fir.love.io:3005/amd64/config-cpp-gcc1130, cc: /opt/gcc1130/bin/gcc, cxx: /opt/gcc1130/bin/g++, build_type: Debug, cppstd: 14, yaml: ON, toml: ON, json: ON }
           - { name: g++12.3.0, image: fir.love.io:3005/amd64/config-cpp-gcc1230, cc: /opt/gcc1230/bin/gcc, cxx: /opt/gcc1230/bin/g++, build_type: Debug, cppstd: 20, yaml: ON, toml: ON, json: ON }
           - { name: g++13.3.0, image: fir.love.io:3005/amd64/config-cpp-gcc1330, cc: /opt/gcc1330/bin/gcc, cxx: /opt/gcc1330/bin/g++, build_type: Debug, cppstd: 20, yaml: ON, toml: ON, json: ON }
+          - { name: g++14.3.0, image: fir.love.io:3005/amd64/config-cpp-gcc1430, cc: /opt/gcc1430/bin/gcc, cxx: /opt/gcc1430/bin/g++, build_type: Debug, cppstd: 20, yaml: ON, toml: ON, json: ON }
 
     name: "${{ matrix.config.name}} (C++${{ matrix.config.cppstd }}, ${{ matrix.config.build_type }})"
     steps:
@@ -40,7 +41,7 @@ jobs:
         uses: https://github.com/addnab/docker-run-action@v3
         with:
           image: ${{ matrix.config.image }}
-          options: --rm --volumes-from=${{ env.JOB_CONTAINER_NAME }}
+          options: --rm --volumes-from=${{ env.JOB_CONTAINER_NAME }} --pull always
           run: |
             cd ${{ gitea.workspace }}
             ./build.sh -cc=${{ matrix.config.cc }} --cxx=${{ matrix.config.cxx }} --cmake="-DCMAKE_BUILD_TYPE=${{ matrix.config.cppstd }} -DCMAKE_CXX_STD=${{ matrix.config.cppstd }} -DYAML_SUPPORT=${{ matrix.config.yaml }} -DTOML_SUPPORT=${{ matrix.config.toml }} -DJSON_SUPPORT=${{ matrix.config.json }}"
