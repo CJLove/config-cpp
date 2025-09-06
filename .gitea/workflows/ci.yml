@@ -44,7 +44,7 @@ jobs:
           options: --rm --volumes-from=${{ env.JOB_CONTAINER_NAME }} --pull always
           run: |
             cd ${{ gitea.workspace }}
-            ./build.sh -cc=${{ matrix.config.cc }} --cxx=${{ matrix.config.cxx }} --cmake="-DCMAKE_BUILD_TYPE=${{ matrix.config.cppstd }} -DCMAKE_CXX_STD=${{ matrix.config.cppstd }} -DYAML_SUPPORT=${{ matrix.config.yaml }} -DTOML_SUPPORT=${{ matrix.config.toml }} -DJSON_SUPPORT=${{ matrix.config.json }}"
+            ./build.sh -cc=${{ matrix.config.cc }} --cxx=${{ matrix.config.cxx }} --cmake="-DCMAKE_BUILD_TYPE=${{ matrix.config.cppstd }} -DCMAKE_CXX_STD=${{ matrix.config.cppstd }} -DYAML_SUPPORT=${{ matrix.config.yaml }} -DTOML_SUPPORT=${{ matrix.config.toml }} -DJSON_SUPPORT=${{ matrix.config.json }} --vcpkg"
 
   results:
     runs-on: ubuntu-latest
