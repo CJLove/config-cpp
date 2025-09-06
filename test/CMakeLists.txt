@@ -44,7 +44,7 @@ endif(TOML_SUPPORT)
 add_executable ( ConfigCppTests ${ConfigCppTests_SRC} )
 
 
-target_link_libraries( ConfigCppTests gtest gtest_main )
+target_link_libraries( ConfigCppTests GTest::gtest GTest::gtest_main )
 
 target_link_libraries( ConfigCppTests config-cpp )
 
