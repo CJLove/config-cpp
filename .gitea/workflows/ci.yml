@@ -45,7 +45,7 @@ jobs:
           run: |
             cd ${{ gitea.workspace }}
             export VCPKG_DEFAULT_BINARY_CACHE=/home/vcpkg
-            ./build.sh -cc=${{ matrix.config.cc }} --cxx=${{ matrix.config.cxx }} --vcpkg --cmake="-DCMAKE_BUILD_TYPE=${{ matrix.config.cppstd }} -DCMAKE_CXX_STD=${{ matrix.config.cppstd }} -DYAML_SUPPORT=${{ matrix.config.yaml }} -DTOML_SUPPORT=${{ matrix.config.toml }} -DJSON_SUPPORT=${{ matrix.config.json }}"
+            ./build.sh -cc=${{ matrix.config.cc }} --cxx=${{ matrix.config.cxx }} --vcpkg --cmake="-DCMAKE_BUILD_TYPE=${{ matrix.config.cppstd }} -DCMAKE_CXX_STD=${{ matrix.config.cppstd }} -DYAML_SUPPORT=${{ matrix.config.yaml }} -DTOML_SUPPORT=${{ matrix.config.toml }} -DJSON_SUPPORT=${{ matrix.config.json }} -DBUILD_EXAMPLES=ON -DBUILD_TESTS=ON"
 
   results:
     runs-on: ubuntu-latest

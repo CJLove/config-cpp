@@ -92,7 +92,7 @@ fi
 # If building with VCPKG then specify a toolchain file
 if [ -n "$PARAM_VCPKG" ]; then
     echo "Enabling VCPKG"
-    PARAM_CMAKE="-DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
+    PARAM_CMAKE="$PARAM_CMAKE -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
 fi
 
 # Create build directory and switch to it
@@ -102,9 +102,9 @@ cd "$BUILDDIR" || exit
 # Configure via CMake
 if [ -n "$PARAM_CXX" ] || [ -n "$PARAM_CC" ]; then
     # Override CC and CXX
-    CC=$PARAM_CC CXX=$PARAM_CXX cmake "$PARAM_CMAKE" -DCMAKE_BUILD_TYPE=DEBUG -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=ON ..
+    CC=$PARAM_CC CXX=$PARAM_CXX cmake $PARAM_CMAKE -DCMAKE_BUILD_TYPE=DEBUG  ..
 else
-    cmake "$PARAM_CMAKE" -DBUILD_TESTS=ON ..
+    cmake $PARAM_CMAKE ..
 fi
 ret=$?
 [ $ret -ne 0 ] && exit $ret
