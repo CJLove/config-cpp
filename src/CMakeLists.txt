@@ -51,7 +51,7 @@ endif(BUILD_STATIC_LIBS)
 target_link_libraries( config-cpp pthread )
 
 if (YAML_SUPPORT)
-    target_link_libraries( config-cpp yaml-cpp )
+    target_link_libraries( config-cpp yaml-cpp::yaml-cpp )
 endif(YAML_SUPPORT)
 
 if (JSON_SUPPORT)
