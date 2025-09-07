@@ -22,7 +22,7 @@ ConfigCpp uses the following precedence order.  Each item takes precedence over 
 - default
 
 ## Dependencies
-- C++14-capable compiler
+- C++17-capable compiler
 - GoogleTest (unit testing)
 - CMake
 - cxxopts (https://github.com/jarro2783/cxxopts) version 3.1.1 or later

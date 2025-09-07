@@ -77,8 +77,8 @@ endif(NOT CMAKE_BUILD_TYPE)
 option(YAML_SUPPORT "Support YAML config files" ON)
 option(JSON_SUPPORT "Support JSON config files" ON)
 option(TOML_SUPPORT "Support TOML config files" ON)
-option(BUILD_EXAMPLES "Build examples" ON)
-option(BUILD_TESTS "Build unit tests." ON)
+option(BUILD_EXAMPLES "Build examples" OFF)
+option(BUILD_TESTS "Build unit tests." OFF)
 option(BUILD_COVERAGE "Build for code coverage." OFF)
 option(BUILD_SHARED_LIBS "Build Shared Libraries" OFF)
 option(BUILD_STATIC_LIBS "Build Static Libraries" ON)
@@ -93,7 +93,7 @@ set (CMAKE_MODULE_PATH  ${CMAKE_MODULE_PATH}
 #---------------------------------------------------------------------------------------
 # compiler config
 #---------------------------------------------------------------------------------------
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -126,7 +126,7 @@ endif(JSON_SUPPORT)
 
 if (TOML_SUPPORT)
     # toml11 library dependency
-    find_package(toml11 3.4.0 REQUIRED)
+    find_package(toml11 4.4.0 REQUIRED)
 
     add_definitions(-DTOML_SUPPORT)
 endif(TOML_SUPPORT)

@@ -9,6 +9,7 @@ $(basename "$0") options
     [--cc=<path/to/cc>]      - path for CC env variable
     [--cmake=<options>]      - option string to pass to CMake
     [--cover]                - generate unit test and code coverage reports
+    [--vcpkg]                - build with VCPKG
     [--concourse]            - building in Concourse
 EOT
     return 0    
@@ -20,6 +21,7 @@ PARAM_CXX=
 PARAM_CMAKE=
 PARAM_COVER=0
 PARAM_CONCOURSE=
+PARAM_VCPKG=
 
 while test $# -gt 0; do
     param="$1"
@@ -54,6 +56,9 @@ while test $# -gt 0; do
     concourse*)
         PARAM_CONCOURSE=1
         ;;
+    vcpkg*)
+        PARAM_VCPKG=1
+        ;;
     help|h|?|-?)
         ShowUsage
         exit 0
@@ -82,6 +87,12 @@ if [ -n "$PARAM_CONCOURSE" ]; then
 
     # Change to the base directory of the repo
     cd config-cpp-git || exit
+fi
+
+# If building with VCPKG then specify a toolchain file
+if [ -n "$PARAM_VCPKG" ]; then
+    echo "Enabling VCPKG"
+    PARAM_CMAKE="-DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
 fi
 
 # Create build directory and switch to it

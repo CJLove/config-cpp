@@ -1,0 +1,9 @@
+{
+    "dependencies": [
+        "gtest",
+        "yaml-cpp",
+        "nlohmann-json",
+        "toml11",
+        "cxxopts"
+    ]
+}
