@@ -11,8 +11,9 @@ jobs:
     strategy:
       matrix:
         config:
-          - { compiler: gcc, version: 8, build_type: Release, cppstd: 14, examples: ON }
-          - { compiler: gcc, version: 9, build_type: Release, cppstd: 17, examples: OFF }
+          # Disabled due to apt-get update issues
+          #- { compiler: gcc, version: 8, build_type: Release, cppstd: 14, examples: ON }
+          #- { compiler: gcc, version: 9, build_type: Release, cppstd: 17, examples: OFF }
           - { compiler: gcc, version: 10, build_type: Debug, cppstd: 20, examples: ON }
           - { compiler: gcc, version: 11, build_type: Debug, cppstd: 20, examples: OFF }
           - { compiler: gcc, version: 12, build_type: Release, cppstd: 20, examples: ON }
@@ -36,7 +37,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Setup
         run: |
-          apt-get update && apt-get install -y curl git
+          apt-get update && apt-get install -y curl git zip unzip tar pkg-config
           CMAKE_VERSION="3.24.2"
           curl -sSL https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-linux-x86_64.sh -o install-cmake.sh
           chmod +x install-cmake.sh
@@ -50,34 +51,18 @@ jobs:
           fi
           echo "CC=clang-${{ matrix.config.version }}" >> $GITHUB_ENV
           echo "CXX=clang++-${{ matrix.config.version }}" >> $GITHUB_ENV
-      - name: Dependencies
-        run: |
-          # Install json
-          curl -sSL https://github.com/nlohmann/json/archive/v3.11.2.tar.gz -o /tmp/json.tar.gz
-          tar zxf /tmp/json.tar.gz
-          pushd json-* && mkdir build && cd build && cmake -DJSON_BuildTests=OFF .. && make install && popd
-          # Install yaml-cpp
-          curl -sSL https://github.com/jbeder/yaml-cpp/archive/yaml-cpp-0.7.0.tar.gz -o /tmp/yaml.tar.gz
-          tar zxf /tmp/yaml.tar.gz
-          pushd yaml-* && mkdir build && cd build && cmake -DYAML_BUILD_SHARED_LIBS=ON -DYAML_CPP_BUILD_TESTS=OFF .. && make install && popd
-          # Install cxxopts
-          curl -sSL https://github.com/jarro2783/cxxopts/archive/v3.1.1.tar.gz -o /tmp/cxxopts.tar.gz
-          tar zxf /tmp/cxxopts.tar.gz
-          pushd cxxopts-* && mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release -DCXXOPTS_BUILD_EXAMPLES=OFF -DCXXOPTS_BUILD_TESTS=OFF .. && make install && popd
-          # Install toml11
-          curl -sSL https://github.com/ToruNiina/toml11/archive/v3.7.1.tar.gz -o /tmp/toml11.tar.gz
-          tar zxf /tmp/toml11.tar.gz
-          pushd toml11-* && mkdir build && cd build && cmake -Dtoml11_BUILD_TEST=OFF .. && make install && popd
-          # Install googletest
-          curl -sSL https://github.com/google/googletest/archive/refs/tags/v1.13.0.tar.gz -o /tmp/googletest.tar.gz
-          tar zxf /tmp/googletest.tar.gz
-          pushd googletest-* && mkdir build && cd build && cmake .. && make install && popd
-          
+      - name: Setup vcpkg
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgJsonGlob: '**/vcpkg.json'
+          vcpkgDirectory: '${{ runner.workspace }}/b/vcpkg'
+          vcpkgGitCommitId: 120deac3062162151622ca4860575a33844ba10b          
       - name: Build
         run: |
           mkdir -p build && cd build
           export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
           cmake .. \
+            -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake \
             -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} \
             -DCMAKE_CXX_STANDARD=${{ matrix.config.cppstd }} \
             -DBUILD_EXAMPLES=${{ matrix.config.example }} \
