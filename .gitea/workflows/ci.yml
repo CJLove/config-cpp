@@ -21,8 +21,12 @@ jobs:
           - { name: yaml, image: fir.love.io:3005/amd64/gcc1511, cc: /usr/bin/gcc, cxx: /usr/bin/g++, build_type: Release, cppstd: 17, yaml: ON, toml: OFF, json: OFF } 
           - { name: toml, image: fir.love.io:3005/amd64/gcc1511, cc: /usr/bin/gcc, cxx: /usr/bin/g++, build_type: Release, cppstd: 17, yaml: OFF, toml: ON, json: OFF } 
           - { name: json, image: fir.love.io:3005/amd64/gcc1511, cc: /usr/bin/gcc, cxx: /usr/bin/g++, build_type: Release, cppstd: 17, yaml: OFF, toml: OFF, json: ON } 
-          - { name: clang16, image: fir.love.io:3005/amd64/gcc1511, cc: /usr/bin/clang, cxx: /usr/bin/clang++, build_type: Debug, cppstd: 17, yaml: ON, toml: ON, json: ON }
-          - { name: clang16, image: fir.love.io:3005/amd64/gcc1511, cc: /usr/bin/clang, cxx: /usr/bin/clang++, build_type: Release, cppstd: 17, yaml: ON, toml: ON, json: ON }
+          - { name: clang15, image: fir.love.io:3005/amd64/clang15, cc: /usr/bin/clang-15, cxx: /usr/bin/clang++-15, build_type: Debug, cppstd: 17, yaml: ON, toml: ON, json: ON }
+          - { name: clang17, image: fir.love.io:3005/amd64/clang17, cc: /usr/bin/clang-17, cxx: /usr/bin/clang++-17, build_type: Debug, cppstd: 17, yaml: ON, toml: ON, json: ON }
+          - { name: clang18, image: fir.love.io:3005/amd64/clang18, cc: /usr/bin/clang-18, cxx: /usr/bin/clang++-18, build_type: Debug, cppstd: 17, yaml: ON, toml: ON, json: ON }
+          - { name: clang19, image: fir.love.io:3005/amd64/clang19, cc: /usr/bin/clang-19, cxx: /usr/bin/clang++-19, build_type: Debug, cppstd: 17, yaml: ON, toml: ON, json: ON }
+          - { name: clang20, image: fir.love.io:3005/amd64/gcc1511, cc: /usr/bin/clang, cxx: /usr/bin/clang++, build_type: Debug, cppstd: 17, yaml: ON, toml: ON, json: ON }
+          - { name: clang20, image: fir.love.io:3005/amd64/gcc1511, cc: /usr/bin/clang, cxx: /usr/bin/clang++, build_type: Release, cppstd: 17, yaml: ON, toml: ON, json: ON }
           - { name: asan, image: fir.love.io:3005/amd64/gcc1511, cc: /usr/bin/gcc, cxx: /usr/bin/g++, build_type: asan, cppstd: 17, yaml: ON, toml: ON, json: ON }
           - { name: tsan, image: fir.love.io:3005/amd64/gcc1511, cc: /usr/bin/gcc, cxx: /usr/bin/g++, build_type: tsan, cppstd: 17, yaml: ON, toml: ON, json: ON }
           - { name: ubsan, image: fir.love.io:3005/amd64/gcc1511, cc: /usr/bin/gcc, cxx: /usr/bin/g++, build_type: ubsan, cppstd: 17, yaml: ON, toml: ON, json: ON }
